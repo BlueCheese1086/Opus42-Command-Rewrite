@@ -2,31 +2,46 @@ package frc.robot.drive;
 
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-public class Drivetrain extends SubsystemBase {
+public class DrivetrainSubsystem extends SubsystemBase {
 
     // Initializing SPARKY MAXES HOW ELECTRIFYING
-    private static final CANSparkMax rightMaster = new CANSparkMax(1, MotorType.kBrushless);
-    private static final CANSparkMax rightSlave = new CANSparkMax(1, MotorType.kBrushless);
+    private static final CANSparkMax rightMaster = new CANSparkMax(2, MotorType.kBrushless);
+    private static final CANSparkMax rightSlave = new CANSparkMax(4, MotorType.kBrushless);
     private static final CANSparkMax leftMaster = new CANSparkMax(1, MotorType.kBrushless);
-    private static final CANSparkMax leftSlave = new CANSparkMax(1, MotorType.kBrushless);
+    private static final CANSparkMax leftSlave = new CANSparkMax(3, MotorType.kBrushless);
 
     private static final RelativeEncoder rightEncoder = rightMaster.getEncoder();
     private static final RelativeEncoder leftEncoder = leftMaster.getEncoder();
 
-    public Drivetrain() {
+    public DrivetrainSubsystem() {
 
         // West Coast Moment
+        rightMaster.follow(ExternalFollower.kFollowerDisabled, 0);
+        leftMaster.follow(ExternalFollower.kFollowerDisabled, 0);
         rightSlave.follow(rightMaster);
         leftSlave.follow(leftMaster);
+
+        // Inverting left side
+        leftMaster.setInverted(true);
+        rightMaster.setInverted(false);
 
         // Resetting encoders
         rightEncoder.setPosition(0);
         leftEncoder.setPosition(0);
 
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
+        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
+        System.out.println(rightMaster.isFollower());
+        System.out.println(leftMaster.isFollower());
     }
 
     // Gets left encoder
@@ -45,8 +60,7 @@ public class Drivetrain extends SubsystemBase {
      * @param turn Turn axis position
      */
     public void arcadeDrive(double forward, double turn) {
-        rightMaster.set(forward + turn);
-        leftMaster.set(forward - turn);
+        this.staticDrive(forward + turn, forward - turn);
     }
 
     /**
@@ -55,8 +69,8 @@ public class Drivetrain extends SubsystemBase {
      * @param right Right motor speed
      */
     public void staticDrive(double left, double right) {
-        rightMaster.set(right);
         leftMaster.set(left);
+        rightMaster.set(right);
     }
     
 }

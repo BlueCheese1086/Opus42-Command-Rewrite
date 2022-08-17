@@ -4,10 +4,10 @@ import edu.wpi.first.math.controller.PIDController;
 
 public class OogaBoogaPID {
     
-    PIDController pid;
+    private final PIDController pid;
 
-    double maxSpeedValue;
-    double maxSpeed;
+    private final double maxSpeedValue;
+    private final double maxSpeed;
 
     /**
      * @param kp Proportional
@@ -40,7 +40,7 @@ public class OogaBoogaPID {
      * @param kp Proportional
      * @param ki Integral
      * @param kd Derivative
-     * @param maxSpeedValue Calculated number that the pid can give the max output of 1 at (if above x return 1)
+     * @param maxSpeedValue Calculated number that the pid can give the max output at (if above x return max output)
      * @param tolerance How much room of error allowed
      * @param maxSpeed Max speed that the pid can output
      */

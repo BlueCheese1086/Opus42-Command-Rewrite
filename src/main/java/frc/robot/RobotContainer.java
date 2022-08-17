@@ -4,17 +4,17 @@
 
 package frc.robot;
 
-import edu.wpi.first.wpilibj.GenericHID;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import frc.robot.drive.Drivetrain;
-import frc.robot.drive.commands.AlignRobot;
-import frc.robot.drive.commands.Drive;
-import frc.robot.sensors.Limelight;
-import frc.robot.sensors.commands.limeOff;
-import frc.robot.shooter.Shooter;
-import frc.robot.shooter.commands.FeedTower;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.drive.DrivetrainSubsystem;
+import frc.robot.drive.Commands.DefaultDrive;
+import frc.robot.intake.IntakeSub;
+import frc.robot.intake.Commands.IntakeBall;
+import frc.robot.sensors.LimelightSub;
+import frc.robot.shooter.ShooterSub;
 
 /**
  * This class is where the bulk of the robot should be declared. Since Command-based is a
@@ -24,35 +24,37 @@ import frc.robot.shooter.commands.FeedTower;
  */
 public class RobotContainer {
 
-  private final Drivetrain drivetrain = new Drivetrain();
-  private final Shooter shooter = new Shooter();
-  private final Limelight limelight = new Limelight();
+  private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
+  private final ShooterSub shooter = new ShooterSub();
+  private final LimelightSub limelight = new LimelightSub();
+  private final IntakeSub intake = new IntakeSub();
 
-  XboxController controller = new XboxController(0);
+  XboxController driver = new XboxController(0);
+  XboxController operator = new XboxController(1);
 
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
 
-    // Configure the button bindings
-    configureButtonBindings();
 
     // This does the vroom vroom drive drive :D
     drivetrain.setDefaultCommand(
-      new Drive(drivetrain, controller.getRightTriggerAxis() - controller.getLeftTriggerAxis(), controller.getLeftX()
-      ));
+      new DefaultDrive(drivetrain, driver::getLeftY, driver::getRightY));
 
-    limelight.setDefaultCommand(new limeOff(limelight));
+      // Configure the button bindings
+    configureButtonBindings();
+  }
+ 
+
+  // Self made periodic method for debugging
+  // Called in Robot.java
+  public void periodic() {
+    SmartDashboard.putNumber("Trigger", driver.getRightTriggerAxis());
   }
 
-  /**
-   * Use this method to define your button->command mappings. Buttons can be created by
-   * instantiating a {@link GenericHID} or one of its subclasses ({@link
-   * edu.wpi.first.wpilibj.Joystick} or {@link XboxController}), and then passing it to a {@link
-   * edu.wpi.first.wpilibj2.command.button.JoystickButton}.
-   */
   private void configureButtonBindings() {
 
-    new JoystickButton(controller, Button.kA.value).whenHeld(new AlignRobot(drivetrain, limelight));
+    new JoystickButton(operator, Button.kA.value).whenHeld(new IntakeBall(intake));
+    
 
   }
 
