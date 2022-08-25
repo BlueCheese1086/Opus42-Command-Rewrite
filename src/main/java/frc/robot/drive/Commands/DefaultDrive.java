@@ -20,7 +20,7 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        drive.arcadeDrive(-forward.getAsDouble(), turn.getAsDouble());
+        drive.arcadeDrive(forward.getAsDouble()/4, turn.getAsDouble()/4);
     }
     
 }

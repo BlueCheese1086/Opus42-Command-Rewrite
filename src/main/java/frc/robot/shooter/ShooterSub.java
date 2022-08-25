@@ -3,13 +3,14 @@ package frc.robot.shooter;
 import com.ctre.phoenix.motorcontrol.TalonFXControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonFX;
 import edu.wpi.first.wpilibj.Servo;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
 public class ShooterSub extends SubsystemBase {
 
-    private static final TalonFX x = new TalonFX(69);
-    private static final TalonFX y = new TalonFX(70);
+    private static final TalonFX x = new TalonFX(51);
+    private static final TalonFX y = new TalonFX(52);
 
     private static final Servo hood = new Servo(0);
 
@@ -27,6 +28,10 @@ public class ShooterSub extends SubsystemBase {
         y.config_kD(0, Constants.LAUNCHER_KD);
         y.config_kF(0, Constants.LAUNCHER_KF);
 
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("Shooter speed", getMotorVelocity());
     }
 
     public void setMotorVelo(double velo) {
@@ -48,7 +53,7 @@ public class ShooterSub extends SubsystemBase {
     }
 
     public void stop() {
-        setMotorPercentage(0);
+        this.setMotorPercentage(0);
     }
 
 }

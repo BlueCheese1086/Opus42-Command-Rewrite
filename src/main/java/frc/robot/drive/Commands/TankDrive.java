@@ -21,7 +21,7 @@ public class TankDrive extends CommandBase {
 
     @Override
     public void execute() {
-        drive.staticDrive(left.getAsDouble(), right.getAsDouble());
+        drive.set(left.getAsDouble(), right.getAsDouble());
     }
     
 }

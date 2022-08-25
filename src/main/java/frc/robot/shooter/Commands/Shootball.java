@@ -1,22 +1,31 @@
 package frc.robot.shooter.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.shooter.ShooterSub;
+import frc.robot.intake.IntakeSub;
 
 public class Shootball extends CommandBase {
 
-    private final ShooterSub shoot;
+    private final IntakeSub intake;
 
-    private final double speed;
-
-    public Shootball(ShooterSub shoot, double speed) {
-        this.shoot = shoot;
-        this.speed = speed;
+    public Shootball(IntakeSub intake) {
+        this.intake = intake;
+        addRequirements(this.intake);
     }
 
     @Override
     public void execute() {
-        shoot.setMotorVelo(speed);
+        //intake.indexerIn();
+        intake.runTop();
+        intake.runBottom();
     }
 
+    public boolean isFinished() {
+        return false;
+    }
+
+    public void end(boolean interrupted) {
+        intake.stopTower();
+        intake.indexerStop();
+    }
+    
 }

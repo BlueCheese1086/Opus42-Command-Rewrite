@@ -1,6 +1,8 @@
 package frc.robot.intake;
 
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.ExternalFollower;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
@@ -23,38 +25,56 @@ public class IntakeSub extends SubsystemBase {
 
     public IntakeSub() {
 
+        // Inverting
         rearTop.setInverted(true);
-        rearBottom.setInverted(true);
+        frontTop.setInverted(false);
+        rearBottom.setInverted(false);
+        frontBottom.setInverted(false);
 
-        frontBottom.follow(rearBottom, true);
-        frontTop.follow(rearTop, false);
+        // Tower Brake Mode
+        rearTop.setIdleMode(IdleMode.kBrake);
+        frontTop.setIdleMode(IdleMode.kBrake);
+        rearBottom.setIdleMode(IdleMode.kBrake);
+        frontBottom.setIdleMode(IdleMode.kBrake);
 
+        // Tower Following
+        frontBottom.follow(ExternalFollower.kFollowerDisabled, 0);
+        frontTop.follow(ExternalFollower.kFollowerDisabled, 0);
+
+        // Tower Ramp up rates
+        rearTop.setOpenLoopRampRate(0);
+        rearBottom.setOpenLoopRampRate(0);
+
+        // Indexer following
         rightIndexer.follow(leftIndexer, true);
+        leftIndexer.follow(ExternalFollower.kFollowerDisabled, 0);
+
+        intakeExtender.set(false);
 
     }
 
     // Indexer stuff
 
     public void indexerIn() {
-        rightIndexer.set(-0.8);
+        leftIndexer.set(-0.8);
     }
 
     public void indexerOut() {
-        rightIndexer.set(0.8);
+        leftIndexer.set(0.8);
     }
 
     public void indexerStop() {
-        rightIndexer.set(0);
+        leftIndexer.set(0);
     }
 
     // Front intake stuff
 
     public void intake() {
-        frontIntake.set(-0.55);
+        frontIntake.set(-1);
     }
 
     public void outtake() {
-        frontIntake.set(0.55);
+        frontIntake.set(1);
     }
 
     public void toggleIntakeExtension() {
@@ -73,15 +93,36 @@ public class IntakeSub extends SubsystemBase {
 
     public void stopTower() {
         rearTop.set(0);
+        frontTop.set(0);
         rearBottom.set(0);
+        frontBottom.set(0);
     }
 
     public void runBottom() {
-        rearBottom.set(.8);
+        frontBottom.set(1);
+        rearBottom.set(1);
     }
 
     public void runTop() {
-        rearTop.set(.8);
+        frontTop.set(1);
+        rearTop.set(1);
+    }
+
+    public void runSection(int section, double speed) {
+        switch (section) {
+            case 1:
+                frontTop.set(speed);
+                break;
+            case 2:
+                rearTop.set(speed);
+                break;
+            case 3:
+                frontBottom.set(speed);
+                break;
+            case 4:
+                rearBottom.set(speed);
+                break;
+        }
     }
 
     public void setTowerSpeed(double speed) {

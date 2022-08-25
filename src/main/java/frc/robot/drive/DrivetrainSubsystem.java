@@ -3,6 +3,7 @@ package frc.robot.drive;
 import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.ExternalFollower;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
@@ -27,6 +28,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
         rightSlave.follow(rightMaster);
         leftSlave.follow(leftMaster);
 
+        rightMaster.setIdleMode(IdleMode.kBrake);
+        leftMaster.setIdleMode(IdleMode.kBrake);
+
+        // Demos
+        leftMaster.setOpenLoopRampRate(0);
+        rightMaster.setOpenLoopRampRate(0);
+
         // Inverting left side
         leftMaster.setInverted(true);
         rightMaster.setInverted(false);
@@ -40,8 +48,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
-        System.out.println(rightMaster.isFollower());
-        System.out.println(leftMaster.isFollower());
     }
 
     // Gets left encoder
@@ -60,7 +66,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param turn Turn axis position
      */
     public void arcadeDrive(double forward, double turn) {
-        this.staticDrive(forward + turn, forward - turn);
+        this.set(forward + turn, forward - turn);
     }
 
     /**
@@ -68,7 +74,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      * @param left Left motor speed
      * @param right Right motor speed
      */
-    public void staticDrive(double left, double right) {
+    public void set(double left, double right) {
         leftMaster.set(left);
         rightMaster.set(right);
     }
