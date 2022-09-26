@@ -1,0 +1,14 @@
+{
+  "NTProvider": {
+    "types": {
+      "/FMSInfo": "FMSInfo",
+      "/LiveWindow/DrivetrainSubsystem": "Subsystem",
+      "/LiveWindow/GyroSub": "Subsystem",
+      "/LiveWindow/IntakeSub": "Subsystem",
+      "/LiveWindow/LimelightSub": "Subsystem",
+      "/LiveWindow/ShooterSub": "Subsystem",
+      "/LiveWindow/Ungrouped/Scheduler": "Scheduler",
+      "/LiveWindow/Ungrouped/navX-Sensor[4]": "Gyro"
+    }
+  }
+}

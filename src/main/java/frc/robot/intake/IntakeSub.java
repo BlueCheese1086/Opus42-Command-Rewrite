@@ -7,7 +7,11 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RapperClass.FiftyCent;
 
 public class IntakeSub extends SubsystemBase {
 
@@ -23,6 +27,7 @@ public class IntakeSub extends SubsystemBase {
     private static final CANSparkMax leftIndexer = new CANSparkMax(21, MotorType.kBrushless);
     private static final CANSparkMax rightIndexer = new CANSparkMax(22, MotorType.kBrushless);
 
+
     public IntakeSub() {
 
         // Inverting
@@ -32,10 +37,10 @@ public class IntakeSub extends SubsystemBase {
         frontBottom.setInverted(false);
 
         // Tower Brake Mode
-        rearTop.setIdleMode(IdleMode.kBrake);
-        frontTop.setIdleMode(IdleMode.kBrake);
-        rearBottom.setIdleMode(IdleMode.kBrake);
-        frontBottom.setIdleMode(IdleMode.kBrake);
+        rearTop.setIdleMode(IdleMode.kCoast);
+        frontTop.setIdleMode(IdleMode.kCoast);
+        rearBottom.setIdleMode(IdleMode.kCoast);
+        frontBottom.setIdleMode(IdleMode.kCoast);
 
         // Tower Following
         frontBottom.follow(ExternalFollower.kFollowerDisabled, 0);
@@ -45,12 +50,24 @@ public class IntakeSub extends SubsystemBase {
         rearTop.setOpenLoopRampRate(0);
         rearBottom.setOpenLoopRampRate(0);
 
+        // Set Curremt Limits so Neo doesnt smell bad again
+        // Prevents overheating
+        rearTop.setSmartCurrentLimit(30);
+        frontTop.setSmartCurrentLimit(30);
+        rearBottom.setSmartCurrentLimit(30);
+        frontBottom.setSmartCurrentLimit(30);
+
         // Indexer following
         rightIndexer.follow(leftIndexer, true);
         leftIndexer.follow(ExternalFollower.kFollowerDisabled, 0);
 
         intakeExtender.set(false);
 
+    }
+
+    public void periodic() {
+        SmartDashboard.putNumber("BottomRear amps", rearBottom.getOutputCurrent());
+        SmartDashboard.putNumber("BottomRear temo", rearBottom.getMotorTemperature());
     }
 
     // Indexer stuff

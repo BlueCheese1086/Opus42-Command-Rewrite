@@ -8,6 +8,7 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.RapperClass.FiftyCent;
 
 public class DrivetrainSubsystem extends SubsystemBase {
 
@@ -48,6 +49,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void periodic() {
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition());
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition());
+        //FiftyCent.putShuffleboard();
     }
 
     // Gets left encoder
