@@ -6,9 +6,11 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.POVButton;
+import frc.robot.RapperClass.FiftyCent;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
 import frc.robot.intake.IntakeSub;
@@ -39,7 +41,7 @@ public class RobotContainer {
   private final IntakeSub intake = new IntakeSub();
 
   private final LimelightSub limelight = new LimelightSub();
-  private final GyroSub gyro = new GyroSub();
+  //private final GyroSub gyro = new GyroSub();
 
   private double shootSpeed = 0;
 
@@ -50,6 +52,11 @@ public class RobotContainer {
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    // Put the init motors on dashboard
+    FiftyCent.putShuffleboard();
+
+    Shuffleboard.update();
 
     // This does the vroom vroom drive drive :D
     drivetrain.setDefaultCommand(
@@ -72,6 +79,8 @@ public class RobotContainer {
     SmartDashboard.putNumber("Shooter Target", SmartDashboard.getNumber("Shooter Target", shootSpeed));
     shootSpeed = SmartDashboard.getNumber("Shooter Target", 0);
     SmartDashboard.putNumber("Actual Target Speed", shootSpeed);
+    SmartDashboard.putNumber("Turn", getTurn());
+    SmartDashboard.putNumber("Forward", getForward());
   }
 
   private void configureButtonBindings() {
@@ -80,11 +89,6 @@ public class RobotContainer {
     new JoystickButton(driver, Button.kX.value).whenHeld(new OuttakeBall(intake));
 
     new JoystickButton(driver, Button.kA.value).whenHeld(new RevShooter(shooter).andThen(new Shootball(intake)));
-
-    new POVButton(driver, 0).whenHeld(new RunTower(intake, 1, 1));
-    new POVButton(driver, 90).whenHeld(new RunTower(intake, 2, 1));
-    new POVButton(driver, 180).whenHeld(new RunTower(intake, 3, 1));
-    new POVButton(driver, 270).whenHeld(new RunTower(intake, 4, 1));
 
 
   }
@@ -97,7 +101,7 @@ public class RobotContainer {
   }
 
   private double getTurn() {
-    return Meth.doTurnMagik(driver.getLeftX());
+    return -Meth.doTurnMagik(driver.getLeftX());
   }
 
 }

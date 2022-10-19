@@ -74,7 +74,7 @@ public class Meth {
      * @return Returns the deadzone and rates
      */
     public static double doMagik(double d) {
-        double deadzone = .05;
+        double deadzone = .1;
         if (Math.abs(d) >= deadzone) {
             return getRate(d);
         }
@@ -86,7 +86,7 @@ public class Meth {
      * @return Returns rates and deadzone
      */
     public static double doTurnMagik(double d) {
-        double deadzone = .01;
+        double deadzone = .1;
         if (Math.abs(d) >= deadzone) {
             return rates(250.0, 700, .28, d);
         }
@@ -99,10 +99,11 @@ public class Meth {
      * @return Returns deadzone with given inputs
      */
     public static double deadzone(double d, double dead) {
-        if (Math.abs(d) >= dead) {
+        return Math.abs(d) > dead ? d : 0.0;
+        /*if (Math.abs(d) >= dead) {
             return getRate(d);
         }
-        return 0.0;
+        return 0.0;*/
     }
 
 }

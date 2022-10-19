@@ -15,17 +15,17 @@ import frc.robot.RapperClass.FiftyCent;
 
 public class IntakeSub extends SubsystemBase {
 
-    private static final CANSparkMax frontIntake = new CANSparkMax(31, MotorType.kBrushless);
+    private static final FiftyCent frontIntake = new FiftyCent(31, MotorType.kBrushless);
 
     private static final Solenoid intakeExtender = new Solenoid(PneumaticsModuleType.CTREPCM, 3);
 
-    private static final CANSparkMax rearTop = new CANSparkMax(41, MotorType.kBrushless);
-    private static final CANSparkMax rearBottom = new CANSparkMax(42, MotorType.kBrushless);
-    private static final CANSparkMax frontBottom = new CANSparkMax(43, MotorType.kBrushless);
-    private static final CANSparkMax frontTop = new CANSparkMax(44, MotorType.kBrushless);
+    private static final FiftyCent rearTop = new FiftyCent(41, MotorType.kBrushless, "Back Top");
+    private static final FiftyCent frontTop = new FiftyCent(44, MotorType.kBrushless, "Front Top");
+    private static final FiftyCent rearBottom = new FiftyCent(42, MotorType.kBrushless, "Back Bottom");
+    private static final FiftyCent frontBottom = new FiftyCent(43, MotorType.kBrushless, "Front Bottom");
 
-    private static final CANSparkMax leftIndexer = new CANSparkMax(21, MotorType.kBrushless);
-    private static final CANSparkMax rightIndexer = new CANSparkMax(22, MotorType.kBrushless);
+    private static final FiftyCent leftIndexer = new FiftyCent(21, MotorType.kBrushless);
+    private static final FiftyCent rightIndexer = new FiftyCent(22, MotorType.kBrushless);
 
 
     public IntakeSub() {

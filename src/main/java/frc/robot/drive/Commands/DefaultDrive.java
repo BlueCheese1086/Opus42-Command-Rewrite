@@ -2,6 +2,7 @@ package frc.robot.drive.Commands;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.drive.DrivetrainSubsystem;
 
@@ -20,7 +21,9 @@ public class DefaultDrive extends CommandBase {
 
     @Override
     public void execute() {
-        drive.arcadeDrive(forward.getAsDouble()/4, turn.getAsDouble()/4);
+        drive.kinDrive(new ChassisSpeeds(
+            forward.getAsDouble() * drive.MAX_FORWARD_VELOCITY, 0.0, turn.getAsDouble() * drive.MAX_RADIANS_TURN_VELO_THING_IDK));
+        //drive.arcadeDrive(forward.getAsDouble()/4, turn.getAsDouble()/4);
     }
     
 }
