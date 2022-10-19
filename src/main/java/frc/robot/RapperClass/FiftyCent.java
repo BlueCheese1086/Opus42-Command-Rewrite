@@ -28,7 +28,6 @@ public class FiftyCent extends CANSparkMax {
         this.putOnDashboard();
     }
 
-
     public FiftyCent(int id, MotorType type, String name) {
         super(id, type);
         this.name = name;
