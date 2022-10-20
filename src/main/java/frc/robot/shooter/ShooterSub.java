@@ -39,6 +39,14 @@ public class ShooterSub extends SubsystemBase {
         y.set(TalonFXControlMode.Velocity, velo);
     }
 
+    /**
+     * Gets shooter speed from limelight angle
+     * @param distance Limelight angle
+     */
+    public double getSpeedFromDistance(double distance) {
+        return distance*-96.4+7537.7;
+    }
+
     public void setMotorPercentage(double velo) {
         x.set(TalonFXControlMode.PercentOutput, velo);
         y.set(TalonFXControlMode.PercentOutput, velo);

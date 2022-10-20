@@ -48,13 +48,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.37003, 1.1603);
 
 
-    // Gearbox 
+    // CONSTANTS STUFF 
     public final double MAX_FORWARD_VELOCITY = 12;
     public final double GEARBOX_RATIO = 8.89;
     public final double WHEEL_CIRCUMPHRENCE = 6 * Math.PI;
-    //public final double ENOCDER_TO_METERS = Units.inchesToMeters(WHEEL_CIRCUMPHRENCEGEARBOX_RATIO);
     public final double MAX_RADIANS_TURN_VELO_THING_IDK = 20;
 
+    public final double Ks = 0.37003;
+    public final double Kv = 1.1603;
+    public final double Ka = 0.40226;
+
+    // Ramsete Stuff
+    public final double b = 2;
+    public final double zeta = 0.7;
 
     public DrivetrainSubsystem() {
 
@@ -101,6 +107,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     }
 
+    @Override
     public void periodic() {
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / GEARBOX_RATIO);
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / GEARBOX_RATIO);
@@ -108,8 +115,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
         odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / GEARBOX_RATIO * Units.inchesToMeters(WHEEL_CIRCUMPHRENCE), rightEncoder.getPosition() / GEARBOX_RATIO * Units.inchesToMeters(WHEEL_CIRCUMPHRENCE));
         field.setRobotPose(odometry.getPoseMeters());
-
-
     }
 
     // Gets left encoder
@@ -120,6 +125,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
     // Gets right encoder
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
+    }
+
+    public void resetOdometry(Pose2d pose) {
+        odometry.resetPosition(pose, gyro.getRotation2d());
+    }
+
+    public Pose2d getPose() {
+        return odometry.getPoseMeters();
+    }
+
+    // Gets gyro angle
+    public double getXRotation() {
+        return gyro.getAngle();
     }
 
     /**
@@ -140,6 +158,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
         leftMaster.setVoltage(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
         rightMaster.setVoltage(feedForward.calculate(diffSpeeds.rightMetersPerSecond));
         //this.set(feedForward.calculate(diffSpeeds.leftMetersPerSecond), feedForward.calculate(diffSpeeds.rightMetersPerSecond));
+    }
+
+    public void voltDrive(double vLeft, double vRight) {
+        leftMaster.setVoltage(vLeft);
+        rightMaster.setVoltage(vRight);
     }
 
     /**
