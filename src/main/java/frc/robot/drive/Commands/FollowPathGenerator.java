@@ -8,14 +8,17 @@ import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
 import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import frc.robot.drive.DrivetrainSubsystem;
 
-public class FollowPath extends RamseteCommand {
+public class FollowPathGenerator {
 
-    public FollowPath(Trajectory t, DrivetrainSubsystem drive) {
+    private final RamseteCommand cmd;
 
-        super(
+    public FollowPathGenerator(Trajectory t, DrivetrainSubsystem drive) {
+
+        cmd = new RamseteCommand(
                 t,
                 drive::getPose,
                 new RamseteController(drive.b, drive.zeta),
@@ -41,6 +44,10 @@ public class FollowPath extends RamseteCommand {
         }
 
         return trajectory;
+    }
+
+    public Command getCmd() {
+        return cmd;
     }
 
 }

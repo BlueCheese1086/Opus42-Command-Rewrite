@@ -21,13 +21,16 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
+import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AUTO.TwoBallAUTO;
 import frc.robot.Climb.ClimbSubsystem;
 import frc.robot.Climb.Commands.Climb;
+import frc.robot.Climb.Commands.SetLock;
 import frc.robot.RapperClass.FiftyCent;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
+import frc.robot.drive.Commands.FollowPathGenerator;
 import frc.robot.drive.Commands.XAlignDrivetrain;
 import frc.robot.intake.IntakeSub;
 import frc.robot.intake.Commands.IndexBall;
@@ -88,12 +91,14 @@ public class RobotContainer {
 
     // Driver Controls
 
-    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight));
+    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
     new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(intake));
 
-    new JoystickButton(driver, Button.kY.value).whenPressed(new XAlignDrivetrain(drivetrain, limelight));
+    new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
 
     new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
+
+    new POVButton(driver, 0).whileActiveOnce(new FollowPathGenerator(FollowPathGenerator.getTrajectoryFromPath("Start2Ball1.wpilib.json"), drivetrain).getCmd());
 
 
     // Op Controls
@@ -107,6 +112,9 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kB.value).whileHeld(new IntakeBall(intake));
 
     new JoystickButton(operator, Button.kX.value).whileHeld(new OuttakeBall(intake));
+    
+    new JoystickButton(operator, Button.kY.value).whileHeld(new SetLock(climb, false)).whenReleased(new SetLock(climb, true));
+
     //toshi is coding very fast right now bruuuuuuuuuu so much coding this is crazy can't wait to see what these 
 
 

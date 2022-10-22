@@ -35,6 +35,12 @@ public class FiftyCent extends CANSparkMax {
         this.putOnDashboard();
     }
 
+    public FiftyCent(int id, MotorType type, boolean dashboard) {
+        super(id, type);
+        //motors.add(this);
+        if (dashboard) this.putOnDashboard();
+    }
+
     public FiftyCent(int id, MotorType type, String name, boolean dashboard) {
         super(id, type);
         this.name=name;
