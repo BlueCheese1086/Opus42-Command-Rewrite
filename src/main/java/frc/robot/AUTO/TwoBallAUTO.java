@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.FollowPath;
+import frc.robot.drive.Commands.XAlignDrivetrain;
 import frc.robot.intake.IntakeSub;
 import frc.robot.intake.Commands.IntakeBall;
 import frc.robot.sensors.LimelightSub;
@@ -21,6 +22,7 @@ public class TwoBallAUTO extends SequentialCommandGroup {
         t = FollowPath.getTrajectoryFromPath("Start2Ball1.json");
         addCommands(
             new FollowPath(t, drive).raceWith(new IntakeBall(in)),
+            new XAlignDrivetrain(drive, lime),
             new AUTOShoot(drive, lime, shoot, in),
             new WaitCommand(2),
             new RunShooter(shoot, () -> 0));
