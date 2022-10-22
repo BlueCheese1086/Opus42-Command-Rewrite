@@ -30,7 +30,6 @@ import frc.robot.Climb.Commands.SetLock;
 import frc.robot.RapperClass.FiftyCent;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
-import frc.robot.drive.Commands.FollowPathGenerator;
 import frc.robot.drive.Commands.XAlignDrivetrain;
 import frc.robot.intake.IntakeSub;
 import frc.robot.intake.Commands.IndexBall;
@@ -38,6 +37,7 @@ import frc.robot.intake.Commands.IntakeBall;
 import frc.robot.intake.Commands.OuttakeBall;
 import frc.robot.sensors.LimelightSub;
 import frc.robot.shooter.ShooterSub;
+import frc.robot.shooter.Commands.RunShooter;
 import frc.robot.shooter.Commands.ShootBall;
 import frc.robot.shooter.Commands.ShooterDistance;
 
@@ -80,6 +80,8 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new DefaultDrive(drivetrain, this::getForward, this::getTurn));
 
+    shooter.setDefaultCommand(new RunShooter(shooter, () -> 0.0));
+
     // Configure the button bindings
     configureButtonBindings();
     SmartDashboard.putNumber("Shooter Target", 10);
@@ -98,7 +100,7 @@ public class RobotContainer {
 
     new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
 
-    new POVButton(driver, 0).whileActiveOnce(new FollowPathGenerator(FollowPathGenerator.getTrajectoryFromPath("Start2Ball1.wpilib.json"), drivetrain).getCmd());
+    //new POVButton(driver, 0).whileActiveOnce(new FollowPathGenerator(FollowPathGenerator.getTrajectoryFromPath("Start2Ball1.wpilib.json"), drivetrain).getCmd());
 
 
     // Op Controls

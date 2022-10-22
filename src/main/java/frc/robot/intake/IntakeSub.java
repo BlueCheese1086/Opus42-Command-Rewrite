@@ -6,7 +6,6 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RapperClass.FiftyCent;
 
@@ -51,8 +50,8 @@ public class IntakeSub extends SubsystemBase {
         // Prevents overheating
         rearTop.setSmartCurrentLimit(30);
         frontTop.setSmartCurrentLimit(30);
-        rearBottom.setSmartCurrentLimit(30);
-        frontBottom.setSmartCurrentLimit(30);
+        rearBottom.setSmartCurrentLimit(45);
+        frontBottom.setSmartCurrentLimit(45);
 
         // Indexer following
         rightIndexer.follow(leftIndexer, true);
@@ -60,11 +59,6 @@ public class IntakeSub extends SubsystemBase {
 
         intakeExtender.set(false);
 
-    }
-
-    public void periodic() {
-        SmartDashboard.putNumber("BottomRear amps", rearBottom.getOutputCurrent());
-        SmartDashboard.putNumber("BottomRear temo", rearBottom.getMotorTemperature());
     }
 
     // Indexer stuff

@@ -14,8 +14,9 @@ public class AUTOShoot extends SequentialCommandGroup {
     public AUTOShoot(DrivetrainSubsystem drive, LimelightSub lime, ShooterSub shoot, IntakeSub in) {
         addCommands(
             new XAlignDrivetrain(drive, lime),
-            new WaitCommand(2).raceWith(new ShooterDistance(shoot, lime)),
-            new ShootBall(in).raceWith(new WaitCommand(3)));
+            new ShooterDistance(shoot, lime).raceWith(
+                new WaitCommand(3).raceWith(new WaitCommand(1).andThen(new ShootBall(in)))
+        ));
     }
 
 }
