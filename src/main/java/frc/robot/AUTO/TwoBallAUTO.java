@@ -19,9 +19,9 @@ public class TwoBallAUTO extends SequentialCommandGroup {
     private final Trajectory t;
 
     public TwoBallAUTO(DrivetrainSubsystem drive, LimelightSub lime, ShooterSub shoot, IntakeSub in) {
-        t = FollowPathGenerator.getTrajectoryFromPath("Start2Ball1.wpilib.json");
+        t = FollowPathGenerator.getTrajectoryFromPath("ShorterStart2ball1.wpilib.json");
         addCommands(
-            new AUTOShoot(drive, lime, shoot, in),
+            //new AUTOShoot(drive, lime, shoot, in),
             new FollowPathGenerator(t, drive).getCmd().raceWith(new IntakeBall(in)),
             new XAlignDrivetrain(drive, lime),
             new AUTOShoot(drive, lime, shoot, in),
