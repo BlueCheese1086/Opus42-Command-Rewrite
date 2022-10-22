@@ -14,11 +14,12 @@ public class XAlignDrivetrain extends CommandBase {
     public XAlignDrivetrain(DrivetrainSubsystem drive, LimelightSub lime) {
         this.drive = drive;
         this.lime = lime;
-        addRequirements(this.drive, this.lime);
+        addRequirements(this.drive);
     }
 
     @Override
     public void execute() {
+        lime.setLights(3);
         double tx = lime.getXAngle();
         double speed = xAlignPID.calculate(tx, 0);
         if (xAlignPID.atSetpoint()) {

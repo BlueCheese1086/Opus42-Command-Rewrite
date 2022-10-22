@@ -1,7 +1,6 @@
 package frc.robot.drive;
 
 import com.kauailabs.navx.frc.AHRS;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -15,9 +14,6 @@ import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
 import edu.wpi.first.math.util.Units;
-import edu.wpi.first.wpilibj.drive.DifferentialDrive;
-import edu.wpi.first.wpilibj.motorcontrol.MotorControllerGroup;
-import edu.wpi.first.wpilibj.shuffleboard.BuiltInLayouts;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
@@ -38,7 +34,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     
     private static final AHRS gyro = new AHRS();
 
-    private DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.762);
+    public DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.762);
     private DifferentialDriveWheelSpeeds diffSpeeds = new DifferentialDriveWheelSpeeds(0.0, 0.0);
     //private ChassisSpeeds speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
@@ -49,9 +45,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
 
     // CONSTANTS STUFF 
-    public final double MAX_FORWARD_VELOCITY = 12;
+    public final double MAX_FORWARD_VELOCITY = 6;
     public final double GEARBOX_RATIO = 8.89;
-    public final double WHEEL_CIRCUMPHRENCE = 6 * Math.PI;
+    public final double WHEEL_CIRCUMPHRENCE = Units.inchesToMeters(6 * Math.PI);
     public final double MAX_RADIANS_TURN_VELO_THING_IDK = 20;
 
     public final double Ks = 0.37003;
@@ -59,8 +55,8 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public final double Ka = 0.40226;
 
     // Ramsete Stuff
-    public final double b = 2;
-    public final double zeta = 0.7;
+    public final double b = 1.25;
+    public final double zeta = 1;
 
     public DrivetrainSubsystem() {
 
@@ -93,6 +89,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // Resetting encoders
         rightEncoder.setPosition(0);
         leftEncoder.setPosition(0);
+        rightEncoder.setVelocityConversionFactor(1);
+        leftEncoder.setVelocityConversionFactor(1);
+        rightEncoder.setPositionConversionFactor(1);
+        leftEncoder.setPositionConversionFactor(1);
 
 
         // West Coast Moment
@@ -113,7 +113,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / GEARBOX_RATIO);
         //FiftyCent.putShuffleboard();
 
-        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / GEARBOX_RATIO * Units.inchesToMeters(WHEEL_CIRCUMPHRENCE), rightEncoder.getPosition() / GEARBOX_RATIO * Units.inchesToMeters(WHEEL_CIRCUMPHRENCE));
+        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
     }
 
@@ -163,6 +163,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void voltDrive(double vLeft, double vRight) {
         leftMaster.setVoltage(vLeft);
         rightMaster.setVoltage(vRight);
+        
+    }
+
+    public DifferentialDriveWheelSpeeds getWheelSpeeds() {
+        //return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
+        //return diffSpeeds;
+        return new DifferentialDriveWheelSpeeds((-leftEncoder.getVelocity() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE) / 60.0, (-rightEncoder.getVelocity() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE) / 60.0);
     }
 
     /**

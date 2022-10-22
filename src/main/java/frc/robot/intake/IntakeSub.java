@@ -1,14 +1,11 @@
 package frc.robot.intake;
 
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.PneumaticsModuleType;
 import edu.wpi.first.wpilibj.Solenoid;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RapperClass.FiftyCent;
@@ -32,7 +29,7 @@ public class IntakeSub extends SubsystemBase {
 
         // Inverting
         rearTop.setInverted(true);
-        frontTop.setInverted(false);
+        frontTop.setInverted(true);
         rearBottom.setInverted(false);
         frontBottom.setInverted(false);
 

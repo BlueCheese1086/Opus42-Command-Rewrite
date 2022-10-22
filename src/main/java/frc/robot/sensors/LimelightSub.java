@@ -38,6 +38,10 @@ public class LimelightSub extends SubsystemBase {
      public void setLights(int val) {
          limelight.getEntry("ledMode").setNumber(val);
      }
+
+     public int getLights() {
+         return (int)limelight.getEntry("ledMode").getDouble(0.01);
+     }
  
      /**
       * Sets camMode:

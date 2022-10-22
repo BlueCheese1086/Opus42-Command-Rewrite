@@ -16,6 +16,8 @@ public class ShooterSub extends SubsystemBase {
 
     public ShooterSub() {
 
+        hood.set(0);
+
         x.setInverted(false);
         x.config_kP(0, Constants.LAUNCHER_KP);
         x.config_kI(0, Constants.LAUNCHER_KI);

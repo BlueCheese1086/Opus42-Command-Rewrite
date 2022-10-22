@@ -4,8 +4,10 @@
 
 package frc.robot;
 
+import java.io.IOException;
 import java.nio.file.Path;
 
+import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.math.controller.RamseteController;
 import edu.wpi.first.math.controller.SimpleMotorFeedforward;
 import edu.wpi.first.math.trajectory.Trajectory;
@@ -14,20 +16,26 @@ import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
+import edu.wpi.first.wpilibj2.command.button.Trigger;
+import frc.robot.AUTO.TwoBallAUTO;
+import frc.robot.Climb.ClimbSubsystem;
+import frc.robot.Climb.Commands.Climb;
 import frc.robot.RapperClass.FiftyCent;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
+import frc.robot.drive.Commands.XAlignDrivetrain;
 import frc.robot.intake.IntakeSub;
+import frc.robot.intake.Commands.IndexBall;
 import frc.robot.intake.Commands.IntakeBall;
 import frc.robot.intake.Commands.OuttakeBall;
-import frc.robot.intake.Commands.RunTower;
 import frc.robot.sensors.LimelightSub;
-import frc.robot.sensors.LimelightCommands.LimelightDefault;
 import frc.robot.shooter.ShooterSub;
+import frc.robot.shooter.Commands.ShootBall;
 import frc.robot.shooter.Commands.ShooterDistance;
 
 /**
@@ -44,19 +52,21 @@ public class RobotContainer {
   private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
   private final ShooterSub shooter = new ShooterSub();
   private final IntakeSub intake = new IntakeSub();
+  private final ClimbSubsystem climb = new ClimbSubsystem();
 
   private final LimelightSub limelight = new LimelightSub();
-  // private final GyroSub gyro = new GyroSub();
-
-  private double shootSpeed = 0;
 
   XboxController driver = new XboxController(0);
   XboxController operator = new XboxController(1);
+
+  SendableChooser<Command> autoList = new SendableChooser<>();
 
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
   public RobotContainer() {
+
+    autoList.setDefaultOption("Two Ball Auto", new TwoBallAUTO(drivetrain, limelight, shooter, intake));
 
     // Put the init motors on dashboard
     FiftyCent.putShuffleboard();
@@ -67,39 +77,49 @@ public class RobotContainer {
     drivetrain.setDefaultCommand(
         new DefaultDrive(drivetrain, this::getForward, this::getTurn));
 
-    // Limelight lights default off unless another command is using the limelight
-    // subsystem
-    limelight.setDefaultCommand(
-        new LimelightDefault(limelight));
-
     // Configure the button bindings
     configureButtonBindings();
+    SmartDashboard.putNumber("Shooter Target", 10);
+
+    Shuffleboard.getTab("Auto").add("Auto Chooser", autoList);
   }
 
   private void configureButtonBindings() {
 
-    // new JoystickButton(driver, Button.kB.value).whenHeld(new IntakeBall(intake));
-    // new JoystickButton(driver, Button.kX.value).whenHeld(new
-    // OuttakeBall(intake));
+    // Driver Controls
 
     new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight));
+    new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(intake));
 
-    // new JoystickButton(driver, Button.kA.value).whenHeld(new RevShooter(shooter,
-    // limelight, SmartDashboard.getNumber("Shooter Target", 0)).andThen(new
-    // Shootball(intake)));
+    new JoystickButton(driver, Button.kY.value).whenPressed(new XAlignDrivetrain(drivetrain, limelight));
 
-    // new JoystickButton(operator, Button.kB.value).toggleWhenActive(new
-    // RevShooter(shooter, limelight));
+    new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
+
+
+    // Op Controls
+
+    // Climb
+    new Trigger(() -> Math.abs(operator.getLeftY()) > 0.1 || Math.abs(operator.getRightY()) > 0.1).whileActiveContinuous(new Climb(climb, () -> operator.getLeftY(), () -> operator.getRightY()));
+
+    new JoystickButton(operator, Button.kRightBumper.value).whileHeld(new IndexBall(intake, true));
+    new JoystickButton(operator, Button.kLeftBumper.value).whileHeld(new IndexBall(intake, false));
+
+    new JoystickButton(operator, Button.kB.value).whileHeld(new IntakeBall(intake));
+
+    new JoystickButton(operator, Button.kX.value).whileHeld(new OuttakeBall(intake));
+    //toshi is coding very fast right now bruuuuuuuuuu so much coding this is crazy can't wait to see what these 
+
 
     /*
      * TODO
      * Driver
      * - Drive --
-     * - Rev Shooter
-     * - Shoot
+     * - Rev Shooter --
+     * - Shoot --
+     * - X Align --
      * Operator
-     * - Climb
-     * - Indexer Individual
+     * - Climb --
+     * - Indexer Individual --
      * - Hopper Individual
      * - Bottom Tower Control
      * - Intake Control (Intake extention and motor)
@@ -117,22 +137,42 @@ public class RobotContainer {
     return -Meth.doTurnMagik(driver.getLeftX());
   }
 
+  public Command getAutonomousCommand() {
+    return getAuto();
+  }
+
+  public Command getAuto() {
+    final TwoBallAUTO twoBall = new TwoBallAUTO(drivetrain, limelight, shooter, intake);
+    drivetrain.resetOdometry(twoBall.getInitialPose());
+    return twoBall;
+  }
+
   public Command getTrajectoryTest() {
-    Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("testPath");
+    Path trajectoryPath = Filesystem.getDeployDirectory().toPath().resolve("Start1 to Ball1.wpilib.json");
     Trajectory trajectory = new Trajectory();
-    trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    try {
+      trajectory = TrajectoryUtil.fromPathweaverJson(trajectoryPath);
+    } catch (IOException e) {
+      System.out.println("Couldnt find");
+    }
 
     RamseteCommand ramsete = new RamseteCommand(
-      trajectory, 
-      drivetrain.getPose(), 
-      new RamseteController(drivetrain.b, drivetrain.zeta), 
-      new SimpleMotorFeedforward(drivetrain.Ks, drivetrain.Kv, drivetrain.Ka), 
-      kinematics, 
-      wheelSpeeds, 
-      leftController, 
-      rightController, 
-      outputVolts, 
-      requirements);
+      trajectory,
+        drivetrain::getPose,
+        new RamseteController(drivetrain.b, drivetrain.zeta),
+        new SimpleMotorFeedforward(drivetrain.Ks, drivetrain.Kv, drivetrain.Ka),
+        drivetrain.kinematics,
+        drivetrain::getWheelSpeeds,
+        // new PIDController(0.1, 0.01, 0.5),
+        // new PIDController(0.1, 0.01, 0.5),
+        new PIDController(1, 0, 0),
+        new PIDController(1, 0, 0),
+        drivetrain::voltDrive,
+        drivetrain);
+
+    drivetrain.resetOdometry(trajectory.getInitialPose());
+
+    return ramsete.andThen(() -> drivetrain.voltDrive(0, 0));
   }
 
 }

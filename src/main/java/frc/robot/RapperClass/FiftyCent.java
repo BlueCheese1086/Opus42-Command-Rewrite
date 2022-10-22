@@ -73,7 +73,6 @@ public class FiftyCent extends CANSparkMax {
     @Override
     public void setVoltage(double voltage) {
         if (enabledButton.getBoolean(true)) {
-            System.out.println(enabledButton.getBoolean(false));
             super.setVoltage(voltage);
         } else super.setVoltage(0.0);
     }

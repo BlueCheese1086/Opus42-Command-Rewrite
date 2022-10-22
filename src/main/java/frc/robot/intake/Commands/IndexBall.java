@@ -3,20 +3,22 @@ package frc.robot.intake.Commands;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.intake.IntakeSub;
 
-public class IntakeBall extends CommandBase {
+public class IndexBall extends CommandBase {
 
     private final IntakeSub intake;
 
-    public IntakeBall(IntakeSub intake) {
+    private final boolean in;
+
+    public IndexBall(IntakeSub intake, boolean in) {
         this.intake = intake;
+        this.in = in;
         addRequirements(this.intake);
     }
 
     @Override
     public void execute() {
-        intake.setIntakeExtension(true);
-        intake.intake();
-        intake.indexerIn();
+        if (in) intake.indexerIn();
+        else intake.indexerOut();
     }
 
     @Override
@@ -25,8 +27,6 @@ public class IntakeBall extends CommandBase {
     }
 
     public void end(boolean interr) {
-        intake.setIntakeExtension(false);
-        intake.stopIntake();
         intake.indexerStop();
     }
     

@@ -1,22 +1,24 @@
-package frc.robot.intake.Commands;
+package frc.robot.shooter.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.intake.IntakeSub;
 
-public class IntakeBall extends CommandBase {
+public class ShootBall extends CommandBase {
 
     private final IntakeSub intake;
 
-    public IntakeBall(IntakeSub intake) {
-        this.intake = intake;
+    public ShootBall(IntakeSub in) {
+        this.intake = in;
         addRequirements(this.intake);
     }
 
     @Override
+    public void initialize() {}
+
+    @Override
     public void execute() {
-        intake.setIntakeExtension(true);
-        intake.intake();
-        intake.indexerIn();
+        intake.runBottom();
+        intake.runTop();
     }
 
     @Override
@@ -24,10 +26,9 @@ public class IntakeBall extends CommandBase {
         return false;
     }
 
+    @Override
     public void end(boolean interr) {
-        intake.setIntakeExtension(false);
-        intake.stopIntake();
-        intake.indexerStop();
+        intake.stopTower();
     }
     
 }

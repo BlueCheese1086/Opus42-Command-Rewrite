@@ -1,7 +1,5 @@
 package frc.robot.intake.Commands;
 
-import java.util.function.IntSupplier;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.intake.IntakeSub;
 
