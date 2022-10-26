@@ -21,25 +21,28 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
 import edu.wpi.first.wpilibj2.command.button.JoystickButton;
-import edu.wpi.first.wpilibj2.command.button.POVButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AUTO.TwoBallAUTO;
-import frc.robot.Climb.ClimbSubsystem;
-import frc.robot.Climb.Commands.Climb;
-import frc.robot.Climb.Commands.SetLock;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.RapperClass.FiftyCent;
+import frc.robot.climb.ClimbSubsystem;
+import frc.robot.climb.Commands.Climb;
+import frc.robot.climb.Commands.SetLock;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
+import frc.robot.drive.Commands.FollowPathGenerator;
 import frc.robot.drive.Commands.XAlignDrivetrain;
-import frc.robot.intake.IntakeSub;
+import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.Commands.IndexBall;
 import frc.robot.intake.Commands.IntakeBall;
 import frc.robot.intake.Commands.OuttakeBall;
 import frc.robot.sensors.LimelightSub;
-import frc.robot.shooter.ShooterSub;
+import frc.robot.sensors.Commands.LimeCommand;
+import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.Commands.RunShooter;
 import frc.robot.shooter.Commands.ShootBall;
 import frc.robot.shooter.Commands.ShooterDistance;
+import frc.robot.tower.TowerSubsystem;
 
 /**
  * This class is where the bulk of the robot should be declared. Since
@@ -53,11 +56,11 @@ import frc.robot.shooter.Commands.ShooterDistance;
 public class RobotContainer {
 
   private final DrivetrainSubsystem drivetrain = new DrivetrainSubsystem();
-  private final ShooterSub shooter = new ShooterSub();
-  private final IntakeSub intake = new IntakeSub();
+  private final ShooterSubsystem shooter = new ShooterSubsystem();
+  private final IntakeSubsystem intake = new IntakeSubsystem();
   private final ClimbSubsystem climb = new ClimbSubsystem();
-
-  private final LimelightSub limelight = new LimelightSub();
+  public final LimelightSub limelight = new LimelightSub();
+  private final TowerSubsystem tower = new TowerSubsystem();
 
   XboxController driver = new XboxController(0);
   XboxController operator = new XboxController(1);
@@ -69,11 +72,10 @@ public class RobotContainer {
    */
   public RobotContainer() {
 
-    autoList.setDefaultOption("Two Ball Auto", new TwoBallAUTO(drivetrain, limelight, shooter, intake));
+    autoList.setDefaultOption("Two Ball Auto", new TwoBallAUTO(drivetrain, limelight, shooter, intake, tower));
 
     // Put the init motors on dashboard
     FiftyCent.putShuffleboard();
-
     Shuffleboard.update();
 
     // This does the vroom vroom drive drive :D
@@ -81,6 +83,9 @@ public class RobotContainer {
         new DefaultDrive(drivetrain, this::getForward, this::getTurn));
 
     shooter.setDefaultCommand(new RunShooter(shooter, () -> 0.0));
+
+    limelight.setDefaultCommand(
+      new LimeCommand(limelight));
 
     // Configure the button bindings
     configureButtonBindings();
@@ -94,11 +99,15 @@ public class RobotContainer {
     // Driver Controls
 
     new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
-    new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(intake));
+    new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(tower));
 
     new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
 
     new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
+
+    //new JoystickButton(driver, Button.kRightBumper.value).whileHeld();
+
+    //new JoystickButton(driver, Button.kRightBumper.value).whileHeld(new FollowPathGenerator(FollowPathGenerator.getTrajectoryFromPath("ShorterStart2ball1.wpilib.json"), drivetrain).getCmd());
 
     //new POVButton(driver, 0).whileActiveOnce(new FollowPathGenerator(FollowPathGenerator.getTrajectoryFromPath("Start2Ball1.wpilib.json"), drivetrain).getCmd());
 
@@ -152,7 +161,7 @@ public class RobotContainer {
   }
 
   public Command getAuto() {
-    final TwoBallAUTO twoBall = new TwoBallAUTO(drivetrain, limelight, shooter, intake);
+    final TwoBallAUTO twoBall = new TwoBallAUTO(drivetrain, limelight, shooter, intake, tower);
     drivetrain.resetOdometry(twoBall.getInitialPose());
     return twoBall;
   }
@@ -169,8 +178,8 @@ public class RobotContainer {
     RamseteCommand ramsete = new RamseteCommand(
       trajectory,
         drivetrain::getPose,
-        new RamseteController(drivetrain.b, drivetrain.zeta),
-        new SimpleMotorFeedforward(drivetrain.Ks, drivetrain.Kv, drivetrain.Ka),
+        new RamseteController(DriveConstants.b, DriveConstants.zeta),
+        new SimpleMotorFeedforward(DriveConstants.Ks, DriveConstants.Kv, DriveConstants.Ka),
         drivetrain.kinematics,
         drivetrain::getWheelSpeeds,
         // new PIDController(0.1, 0.01, 0.5),

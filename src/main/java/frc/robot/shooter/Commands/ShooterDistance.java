@@ -4,23 +4,23 @@ import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.GenericHID.RumbleType;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sensors.LimelightSub;
-import frc.robot.shooter.ShooterSub;
+import frc.robot.shooter.ShooterSubsystem;
 
 public class ShooterDistance extends CommandBase {
 
-    private final ShooterSub shooter;
+    private final ShooterSubsystem shooter;
     private final LimelightSub lime;
     
     private final XboxController x;
 
-    public ShooterDistance(ShooterSub shoot, LimelightSub lime, XboxController x) {
+    public ShooterDistance(ShooterSubsystem shoot, LimelightSub lime, XboxController x) {
         shooter = shoot;
         this.lime = lime;
         this.x = x;
         addRequirements(shooter, this.lime);
     }
 
-    public ShooterDistance(ShooterSub shoot, LimelightSub lime) {
+    public ShooterDistance(ShooterSubsystem shoot, LimelightSub lime) {
         shooter = shoot;
         this.lime = lime;
         this.x = null;
@@ -32,8 +32,10 @@ public class ShooterDistance extends CommandBase {
 
     @Override
     public void execute() {
-        shooter.setMotorVelo(shooter.getSpeedFromDistance(lime.getYAngle()));
-        shooter.setHoodPosition(-0.026*lime.getYAngle()+0.0055);
+        //shooter.setMotorVelo(shooter.getSpeedFromDistance(lime.getYAngle()));
+        shooter.setMotorVelo(6900);
+        //shooter.setHoodPosition(-0.026*lime.getYAngle()+0.0055);
+        shooter.setHoodPosition(1);
         if (x == null) return;
         if (Math.abs(shooter.getMotorVelocity() - shooter.getSpeedFromDistance(lime.getYAngle())) < 100) {
             x.setRumble(RumbleType.kLeftRumble, 1);

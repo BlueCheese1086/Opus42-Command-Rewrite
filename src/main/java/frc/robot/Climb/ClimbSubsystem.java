@@ -1,4 +1,4 @@
-package frc.robot.Climb;
+package frc.robot.climb;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -19,6 +19,9 @@ public class ClimbSubsystem extends SubsystemBase {
 
     private final Solenoid lock;
 
+    /**
+     * Initializes climb object
+     */
     public ClimbSubsystem() {
 
         lock = new Solenoid(PneumaticsModuleType.CTREPCM, 2);
@@ -37,10 +40,18 @@ public class ClimbSubsystem extends SubsystemBase {
     }
 
 
+    /**
+     * Set speed of the left climb
+     * @param speed Speed to run at
+     */
     public void setLeft(double speed) {
         leftClimb.set(speed);
     }
 
+    /**
+     * Set speed of the right climb
+     * @param speed Speed to run at
+     */
     public void setRight(double speed) {
         rightClimb.set(speed);
     }

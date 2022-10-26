@@ -1,15 +1,15 @@
 package frc.robot.shooter.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.intake.IntakeSub;
+import frc.robot.tower.TowerSubsystem;
 
 public class ShootBall extends CommandBase {
 
-    private final IntakeSub intake;
+    private final TowerSubsystem tower;
 
-    public ShootBall(IntakeSub in) {
-        this.intake = in;
-        addRequirements(this.intake);
+    public ShootBall(TowerSubsystem in) {
+        this.tower = in;
+        addRequirements(this.tower);
     }
 
     @Override
@@ -17,8 +17,8 @@ public class ShootBall extends CommandBase {
 
     @Override
     public void execute() {
-        intake.runBottom();
-        intake.runTop();
+        tower.runBottom();
+        tower.runTop();
     }
 
     @Override
@@ -28,7 +28,7 @@ public class ShootBall extends CommandBase {
 
     @Override
     public void end(boolean interr) {
-        intake.stopTower();
+        tower.stopTower();
     }
     
 }

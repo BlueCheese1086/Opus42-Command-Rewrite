@@ -1,29 +1,29 @@
 package frc.robot.intake.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.intake.IntakeSub;
+import frc.robot.tower.TowerSubsystem;
 
 public class RunTower extends CommandBase {
 
-    private final IntakeSub intake;
+    private final TowerSubsystem tower;
 
     private final int motor;
     private final double speed;
 
-    public RunTower(IntakeSub in, int motorid, double speed) {
-        intake = in;
+    public RunTower(TowerSubsystem tower, int motorid, double speed) {
+        this.tower = tower;
         motor = motorid;
         this.speed = speed;
-        addRequirements(intake);
+        addRequirements(tower);
     }
 
     @Override
     public void execute() {
-        intake.runSection(motor, speed);
+        tower.runSection(motor, speed);
     }
 
     public void end(boolean interr) {
-        intake.runSection(motor, 0);
+        tower.runSection(motor, 0);
     }
     
 }

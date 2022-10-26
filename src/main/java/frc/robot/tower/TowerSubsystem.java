@@ -1,31 +1,24 @@
-package frc.robot.intake;
+package frc.robot.tower;
 
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
-import edu.wpi.first.wpilibj.PneumaticsModuleType;
-import edu.wpi.first.wpilibj.Solenoid;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.RapperClass.FiftyCent;
 
-public class IntakeSub extends SubsystemBase {
+public class TowerSubsystem extends SubsystemBase {
 
-    private static final FiftyCent frontIntake = new FiftyCent(31, MotorType.kBrushless);
-
-    private static final Solenoid intakeExtender = new Solenoid(PneumaticsModuleType.CTREPCM, 3);
-
+    // FRONT OF OPUS IS THE SIDE WITH THE INDEXER
     private static final FiftyCent rearTop = new FiftyCent(41, MotorType.kBrushless, "Back Top");
     private static final FiftyCent frontTop = new FiftyCent(44, MotorType.kBrushless, "Front Top");
     private static final FiftyCent rearBottom = new FiftyCent(42, MotorType.kBrushless, "Back Bottom");
     private static final FiftyCent frontBottom = new FiftyCent(43, MotorType.kBrushless, "Front Bottom");
-
-    private static final FiftyCent leftIndexer = new FiftyCent(21, MotorType.kBrushless);
-    private static final FiftyCent rightIndexer = new FiftyCent(22, MotorType.kBrushless);
-
-
-    public IntakeSub() {
-
+    
+    /**
+     * Initializes all tower motors and sensors 
+     */
+    public TowerSubsystem() {
         // Inverting
         rearTop.setInverted(true);
         frontTop.setInverted(true);
@@ -52,53 +45,11 @@ public class IntakeSub extends SubsystemBase {
         frontTop.setSmartCurrentLimit(30);
         rearBottom.setSmartCurrentLimit(45);
         frontBottom.setSmartCurrentLimit(45);
-
-        // Indexer following
-        rightIndexer.follow(leftIndexer, true);
-        leftIndexer.follow(ExternalFollower.kFollowerDisabled, 0);
-
-        intakeExtender.set(false);
-
     }
 
-    // Indexer stuff
-
-    public void indexerIn() {
-        leftIndexer.set(-0.8);
-    }
-
-    public void indexerOut() {
-        leftIndexer.set(0.8);
-    }
-
-    public void indexerStop() {
-        leftIndexer.set(0);
-    }
-
-    // Front intake stuff
-
-    public void intake() {
-        frontIntake.set(-1);
-    }
-
-    public void outtake() {
-        frontIntake.set(1);
-    }
-
-    public void toggleIntakeExtension() {
-        intakeExtender.set(!intakeExtender.get());
-    }
-
-    public void setIntakeExtension(boolean on) {
-        intakeExtender.set(on);
-    }
-
-    public void stopIntake() {
-        frontIntake.set(0);
-    }
-
-    // Tower shit now
-
+    /**
+     * Stops all tower movement
+     */
     public void stopTower() {
         rearTop.set(0);
         frontTop.set(0);
@@ -106,16 +57,32 @@ public class IntakeSub extends SubsystemBase {
         frontBottom.set(0);
     }
 
+    /**
+     * Runs bottom to move ball up
+     */
     public void runBottom() {
         frontBottom.set(1);
         rearBottom.set(1);
     }
 
+    /**
+     * Runs top to move ball up
+     */
     public void runTop() {
         frontTop.set(1);
         rearTop.set(1);
     }
 
+
+    /**
+     * Runs a specific section to run
+     * 1 - Front Top
+     * 2 - Back Top
+     * 3 - Front Bottom
+     * 4 - Back Bottom
+     * @param section Which motor to run
+     * @param speed How fast to run the motor [-1, +1]
+     */
     public void runSection(int section, double speed) {
         switch (section) {
             case 1:
@@ -133,9 +100,13 @@ public class IntakeSub extends SubsystemBase {
         }
     }
 
+    /**
+     * Run the whole tower at a set speed
+     * @param speed How fast to run the tower [-1, +1]
+     */
     public void setTowerSpeed(double speed) {
         rearTop.set(speed);
         rearBottom.set(speed);
     }
-    
+
 }

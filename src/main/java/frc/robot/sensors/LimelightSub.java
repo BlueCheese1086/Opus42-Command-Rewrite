@@ -8,6 +8,9 @@ public class LimelightSub extends SubsystemBase {
     //limelight returns in inches
     NetworkTable limelight;
 
+    /**
+     * Gets limelight network tables
+     */
     public LimelightSub(){
         limelight = NetworkTableInstance.getDefault().getTable("limelight");
     }
@@ -39,6 +42,14 @@ public class LimelightSub extends SubsystemBase {
          limelight.getEntry("ledMode").setNumber(val);
      }
 
+     /**
+      * Gets current limelight led state
+      * 0 - Pipeline setting
+      * 1 - Off
+      * 2 - Blink
+      * 3 - On
+      * @return Limelight led state
+      */
      public int getLights() {
          return (int)limelight.getEntry("ledMode").getDouble(0.01);
      }

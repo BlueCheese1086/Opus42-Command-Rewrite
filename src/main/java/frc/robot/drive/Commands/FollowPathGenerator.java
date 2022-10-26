@@ -10,6 +10,7 @@ import edu.wpi.first.math.trajectory.TrajectoryUtil;
 import edu.wpi.first.wpilibj.Filesystem;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.RamseteCommand;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.drive.DrivetrainSubsystem;
 
 public class FollowPathGenerator {
@@ -21,8 +22,8 @@ public class FollowPathGenerator {
         cmd = new RamseteCommand(
                 t,
                 drive::getPose,
-                new RamseteController(drive.b, drive.zeta),
-                new SimpleMotorFeedforward(drive.Ks, drive.Kv, drive.Ka),
+                new RamseteController(DriveConstants.b, DriveConstants.zeta),
+                new SimpleMotorFeedforward(DriveConstants.Ks, DriveConstants.Kv, DriveConstants.Ka),
                 drive.kinematics,
                 drive::getWheelSpeeds,
                 // new PIDController(0.1, 0.01, 0.5),

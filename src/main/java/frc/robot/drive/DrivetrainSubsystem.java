@@ -13,12 +13,14 @@ import edu.wpi.first.math.kinematics.ChassisSpeeds;
 import edu.wpi.first.math.kinematics.DifferentialDriveKinematics;
 import edu.wpi.first.math.kinematics.DifferentialDriveOdometry;
 import edu.wpi.first.math.kinematics.DifferentialDriveWheelSpeeds;
-import edu.wpi.first.math.util.Units;
+import edu.wpi.first.wpilibj.BuiltInAccelerometer;
+import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.DriveConstants;
 import frc.robot.RapperClass.FiftyCent;
 
 public class DrivetrainSubsystem extends SubsystemBase {
@@ -33,30 +35,18 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final RelativeEncoder leftEncoder = leftMaster.getEncoder();
     
     private static final AHRS gyro = new AHRS();
+    
+    //Play with this later for better odometry
+    //private static final Accelerometer accelerometer = new BuiltInAccelerometer();
 
-    public DifferentialDriveKinematics kinematics = new DifferentialDriveKinematics(0.762);
-    private DifferentialDriveWheelSpeeds diffSpeeds = new DifferentialDriveWheelSpeeds(0.0, 0.0);
+    public DifferentialDriveKinematics kinematics = DriveConstants.kinematics;//new DifferentialDriveKinematics(0.762);
+    private DifferentialDriveWheelSpeeds diffSpeeds = DriveConstants.wheelSpeeds;//new DifferentialDriveWheelSpeeds(0.0, 0.0);
     //private ChassisSpeeds speeds = new ChassisSpeeds(0.0, 0.0, 0.0);
 
     private final DifferentialDriveOdometry odometry = new DifferentialDriveOdometry(new Rotation2d(0.0), new Pose2d());
     private final Field2d field = new Field2d();
 
     private static final SimpleMotorFeedforward feedForward = new SimpleMotorFeedforward(0.37003, 1.1603);
-
-
-    // CONSTANTS STUFF 
-    public final double MAX_FORWARD_VELOCITY = 6;
-    public final double GEARBOX_RATIO = 8.89;
-    public final double WHEEL_CIRCUMPHRENCE = Units.inchesToMeters(6 * Math.PI);
-    public final double MAX_RADIANS_TURN_VELO_THING_IDK = 20;
-
-    public final double Ks = 0.37003;
-    public final double Kv = 1.1603;
-    public final double Ka = 0.40226;
-
-    // Ramsete Stuff
-    public final double b = 1.25;
-    public final double zeta = 1;
 
     public DrivetrainSubsystem() {
 
@@ -107,35 +97,62 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     }
 
+
+    /**
+     * Periodic - Every tick
+     * Putting Left and Right Encoder on Shuffleboard
+     * 
+     * Updating odometry
+     * 
+     */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / GEARBOX_RATIO);
-        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / GEARBOX_RATIO);
+        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
+        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         //FiftyCent.putShuffleboard();
 
-        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE);
+        odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
     }
 
-    // Gets left encoder
+    /**
+     * Gets right encoder object
+     * @return Right encoder object
+     */
     public RelativeEncoder getRightEncoder() {
         return rightEncoder;
     }
 
-    // Gets right encoder
+    /**
+     * Gets left encoder object
+     * @return Left encoder object
+     */
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
     }
 
+
+    /**
+     * Resets odometry to given pose
+     * @param pose Pose to reset odometry to
+     */
     public void resetOdometry(Pose2d pose) {
         odometry.resetPosition(pose, gyro.getRotation2d());
     }
 
+
+    /**
+     * Gets currect robot odometry pose
+     * @return Robot pose
+     */
     public Pose2d getPose() {
         return odometry.getPoseMeters();
     }
 
-    // Gets gyro angle
+    /**
+     * Get current robot angle
+     * @return Robot angle
+     */
     public double getXRotation() {
         return gyro.getAngle();
     }
@@ -149,10 +166,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.set(forward + turn, forward - turn);
     }
 
+    /**
+     * Kinematics drive
+     * @param speeds The X, Y, and Rot velo to move at
+     */
     public void kinDrive(ChassisSpeeds speeds) {
         this.diffSpeeds = kinematics.toWheelSpeeds(speeds);
         //System.out.println(speeds);
-        this.diffSpeeds.desaturate(MAX_FORWARD_VELOCITY);
+        this.diffSpeeds.desaturate(DriveConstants.MAX_FORWARD_VELOCITY);
         //System.out.println(this.diffSpeeds);
         //System.out.println(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
         leftMaster.setVoltage(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
@@ -160,16 +181,26 @@ public class DrivetrainSubsystem extends SubsystemBase {
         //this.set(feedForward.calculate(diffSpeeds.leftMetersPerSecond), feedForward.calculate(diffSpeeds.rightMetersPerSecond));
     }
 
+
+    /**
+     * Set drive motors with voltage
+     * @param vLeft Left voltage
+     * @param vRight Right voltage
+     */
     public void voltDrive(double vLeft, double vRight) {
         leftMaster.setVoltage(vLeft);
         rightMaster.setVoltage(vRight);
         
     }
 
+    /**
+     * Get the current wheel speeds of the robot (m/s)
+     * @return The current wheel speeds
+     */
     public DifferentialDriveWheelSpeeds getWheelSpeeds() {
         //return new DifferentialDriveWheelSpeeds(leftEncoder.getVelocity(), rightEncoder.getVelocity());
         //return diffSpeeds;
-        return new DifferentialDriveWheelSpeeds((-leftEncoder.getVelocity() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE) / 60.0, (-rightEncoder.getVelocity() / GEARBOX_RATIO * WHEEL_CIRCUMPHRENCE) / 60.0);
+        return new DifferentialDriveWheelSpeeds((-leftEncoder.getVelocity() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) / 60.0, (-rightEncoder.getVelocity() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) / 60.0);
     }
 
     /**

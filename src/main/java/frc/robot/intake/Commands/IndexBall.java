@@ -1,15 +1,15 @@
 package frc.robot.intake.Commands;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.intake.IntakeSub;
+import frc.robot.intake.IntakeSubsystem;
 
 public class IndexBall extends CommandBase {
 
-    private final IntakeSub intake;
+    private final IntakeSubsystem intake;
 
     private final boolean in;
 
-    public IndexBall(IntakeSub intake, boolean in) {
+    public IndexBall(IntakeSubsystem intake, boolean in) {
         this.intake = intake;
         this.in = in;
         addRequirements(this.intake);
