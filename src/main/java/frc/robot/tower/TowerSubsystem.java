@@ -26,10 +26,10 @@ public class TowerSubsystem extends SubsystemBase {
         frontBottom.setInverted(false);
 
         // Tower Brake Mode
-        rearTop.setIdleMode(IdleMode.kCoast);
-        frontTop.setIdleMode(IdleMode.kCoast);
-        rearBottom.setIdleMode(IdleMode.kCoast);
-        frontBottom.setIdleMode(IdleMode.kCoast);
+        rearTop.setIdleMode(IdleMode.kBrake);
+        frontTop.setIdleMode(IdleMode.kBrake);
+        rearBottom.setIdleMode(IdleMode.kBrake);
+        frontBottom.setIdleMode(IdleMode.kBrake);
 
         // Tower Following
         frontBottom.follow(ExternalFollower.kFollowerDisabled, 0);

@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -111,6 +112,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         //FiftyCent.putShuffleboard();
 
+        ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
+        testTab.addNumber("AHRS Acceleration", () -> gyro.getRawAccelY());
+        testTab.addNumber("Left Current", () -> leftMaster.getOutputCurrent());
+        testTab.addNumber("Right Current", () -> rightMaster.getOutputCurrent());
+        testTab.addNumber("Left Acceleration", );
+
         odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
     }
@@ -130,7 +137,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
     }
-
 
     /**
      * Resets odometry to given pose
@@ -189,8 +195,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public void voltDrive(double vLeft, double vRight) {
         leftMaster.setVoltage(vLeft);
-        rightMaster.setVoltage(vRight);
-        
+        rightMaster.setVoltage(vRight);        
     }
 
     /**
