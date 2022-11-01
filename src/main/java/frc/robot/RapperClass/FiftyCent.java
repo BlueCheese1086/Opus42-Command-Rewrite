@@ -22,6 +22,8 @@ public class FiftyCent extends CANSparkMax {
     
     private static ArrayList<FiftyCent> motors = new ArrayList<>();
 
+    private double voltage = 0.0;
+
     public FiftyCent(int id, MotorType type) {
         super(id, type);
         //motors.add(this);
@@ -76,11 +78,19 @@ public class FiftyCent extends CANSparkMax {
         } else super.set(0.0);
     }
 
+    public double getVoltage() {
+        return voltage;
+    }
+
     @Override
     public void setVoltage(double voltage) {
         if (enabledButton.getBoolean(true)) {
             super.setVoltage(voltage);
-        } else super.setVoltage(0.0);
+            this.voltage = voltage;
+        } else {
+            super.setVoltage(0.0);
+            voltage = 0.0;
+        }
     }
 
     public void follow(FiftyCent motor) {

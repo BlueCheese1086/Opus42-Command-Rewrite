@@ -96,6 +96,16 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Shuffleboard.getTab("Odometry").add("Odometry", field)
             .withWidget(BuiltInWidgets.kField);
 
+
+        ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
+        testTab.addBoolean("Left Traction", () -> leftTraction());
+        testTab.addBoolean("Right Traction", () -> rightTraction());
+        testTab.addNumber("Right Desired ms", () -> ((rightMaster.getVoltage() - Math.signum(rightMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv));
+        testTab.addNumber("Right ms", () -> rightMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
+        testTab.addNumber("Left Desired ms", () -> ((leftMaster.getVoltage() - Math.signum(leftMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv));
+        testTab.addNumber("Left ms", () -> leftMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
+        testTab.addNumber("Right Voltage", () -> rightMaster.getVoltage());
+        testTab.addNumber("Left Voltage", () -> leftMaster.getVoltage());
     }
 
 
@@ -111,12 +121,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         //FiftyCent.putShuffleboard();
+        //testTab.addNumber("Left Acceleration", );
 
-        ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
-        testTab.addNumber("AHRS Acceleration", () -> gyro.getRawAccelY());
-        testTab.addNumber("Left Current", () -> leftMaster.getOutputCurrent());
-        testTab.addNumber("Right Current", () -> rightMaster.getOutputCurrent());
-        testTab.addNumber("Left Acceleration", );
+        //testTab.addNumber("Desired RPM", );
 
         odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
@@ -217,5 +224,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         leftMaster.set(left);
         rightMaster.set(right);
     }
-    
+
+    public boolean leftTraction() {
+        //if (rightMaster.getEncoder().getVelocity() > 0) {}
+        return Math.abs(leftMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) < .1 + Math.abs((leftMaster.getVoltage() - Math.signum(leftMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv);
+    }
+
+    public boolean rightTraction() {
+        return Math.abs(rightMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) < .1 + Math.abs((rightMaster.getVoltage() - Math.signum(rightMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv);
+    }
+
 }
