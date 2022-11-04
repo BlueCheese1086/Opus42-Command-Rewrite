@@ -38,7 +38,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final AHRS gyro = new AHRS();
     
     //Play with this later for better odometry
-    //private static final Accelerometer accelerometer = new BuiltInAccelerometer();
+    private static final Accelerometer accelerometer = new BuiltInAccelerometer();
 
     public DifferentialDriveKinematics kinematics = DriveConstants.kinematics;//new DifferentialDriveKinematics(0.762);
     private DifferentialDriveWheelSpeeds diffSpeeds = DriveConstants.wheelSpeeds;//new DifferentialDriveWheelSpeeds(0.0, 0.0);
@@ -98,14 +98,17 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
 
         ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
-        testTab.addBoolean("Left Traction", () -> leftTraction());
+        /*testTab.addBoolean("Left Traction", () -> leftTraction());
         testTab.addBoolean("Right Traction", () -> rightTraction());
-        testTab.addNumber("Right Desired ms", () -> ((rightMaster.getVoltage() - Math.signum(rightMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv));
-        testTab.addNumber("Right ms", () -> rightMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
-        testTab.addNumber("Left Desired ms", () -> ((leftMaster.getVoltage() - Math.signum(leftMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv));
-        testTab.addNumber("Left ms", () -> leftMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
+        testTab.addNumber("Right Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().rightMetersPerSecond)+feedForward.calculate(diffSpeeds.rightMetersPerSecond)/DriveConstants.Kv));
+        //testTab.addNumber("Right Desired ms", () -> feedForward.calculate(diffSpeeds.rightMetersPerSecond));
+        testTab.addNumber("Right ms", () -> getWheelSpeeds().rightMetersPerSecond);
+        testTab.addNumber("Left Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().leftMetersPerSecond)+feedForward.calculate(diffSpeeds.leftMetersPerSecond)/DriveConstants.Kv));
+        //testTab.addNumber("Left Desired ms", () -> feedForward.calculate(diffSpeeds.leftMetersPerSecond));
+        testTab.addNumber("Left ms", () -> getWheelSpeeds().leftMetersPerSecond);
         testTab.addNumber("Right Voltage", () -> rightMaster.getVoltage());
-        testTab.addNumber("Left Voltage", () -> leftMaster.getVoltage());
+        testTab.addNumber("Left Voltage", () -> leftMaster.getVoltage());*/
+        testTab.addNumber("Accelerometer", () -> gyro.getWorldLinearAccelY());
     }
 
 
@@ -227,11 +230,11 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     public boolean leftTraction() {
         //if (rightMaster.getEncoder().getVelocity() > 0) {}
-        return Math.abs(leftMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) < .1 + Math.abs((leftMaster.getVoltage() - Math.signum(leftMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv);
+        return Math.abs(getWheelSpeeds().leftMetersPerSecond) <= Math.abs((DriveConstants.Ks*-Math.signum(getWheelSpeeds().leftMetersPerSecond)+feedForward.calculate(diffSpeeds.leftMetersPerSecond))/DriveConstants.Kv);
     }
 
     public boolean rightTraction() {
-        return Math.abs(rightMaster.getEncoder().getVelocity()/ DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE) < .1 + Math.abs((rightMaster.getVoltage() - Math.signum(rightMaster.getEncoder().getVelocity()) * DriveConstants.Ks)/DriveConstants.Kv);
+        return Math.abs(getWheelSpeeds().rightMetersPerSecond) <= Math.abs((DriveConstants.Ks*-Math.signum(getWheelSpeeds().rightMetersPerSecond)+feedForward.calculate(diffSpeeds.rightMetersPerSecond))/DriveConstants.Kv);
     }
 
 }
