@@ -161,6 +161,10 @@ public class RobotContainer {
     return getAuto();
   }
 
+  public void setHood(double pos) {
+    shooter.setHoodPosition(pos);
+  }
+
   public Command getAuto() {
     final TwoBallAUTO twoBall = new TwoBallAUTO(drivetrain, limelight, shooter, intake, tower);
     drivetrain.resetOdometry(twoBall.getInitialPose());
