@@ -98,7 +98,8 @@ public class RobotContainer {
 
     // Driver Controls
 
-    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
+    //new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
+    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new RunShooter(shooter, () -> 6000));
     new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(tower));
 
     new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
