@@ -2,6 +2,8 @@ package frc.robot.drive;
 
 import com.kauailabs.navx.frc.AHRS;
 import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
+import com.revrobotics.CANSparkMax.ControlType;
 import com.revrobotics.CANSparkMax.ExternalFollower;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -34,6 +36,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
 
     private static final RelativeEncoder rightEncoder = rightMaster.getEncoder();
     private static final RelativeEncoder leftEncoder = leftMaster.getEncoder();
+
+    private static SparkMaxPIDController leftPid;
+    private static SparkMaxPIDController rightPid;
+
     
     private static final AHRS gyro = new AHRS();
     
@@ -80,10 +86,22 @@ public class DrivetrainSubsystem extends SubsystemBase {
         // Resetting encoders
         rightEncoder.setPosition(0);
         leftEncoder.setPosition(0);
-        rightEncoder.setVelocityConversionFactor(1);
-        leftEncoder.setVelocityConversionFactor(1);
-        rightEncoder.setPositionConversionFactor(1);
-        leftEncoder.setPositionConversionFactor(1);
+        rightEncoder.setVelocityConversionFactor(DriveConstants.WHEEL_CIRCUMPHRENCE / DriveConstants.GEARBOX_RATIO / 60);
+        leftEncoder.setVelocityConversionFactor(DriveConstants.WHEEL_CIRCUMPHRENCE / DriveConstants.GEARBOX_RATIO / 60);
+        rightEncoder.setPositionConversionFactor(DriveConstants.WHEEL_CIRCUMPHRENCE / DriveConstants.GEARBOX_RATIO);
+        leftEncoder.setPositionConversionFactor(DriveConstants.WHEEL_CIRCUMPHRENCE / DriveConstants.GEARBOX_RATIO);
+
+        // PIDS
+        leftPid = leftMaster.getPIDController();
+        rightPid = rightMaster.getPIDController();
+
+        leftPid.setP(DriveConstants.kDriveP);
+        leftPid.setI(DriveConstants.kDriveI);
+        leftPid.setD(DriveConstants.kDriveD);
+
+        rightPid.setP(DriveConstants.kDriveP);
+        rightPid.setI(DriveConstants.kDriveI);
+        rightPid.setD(DriveConstants.kDriveD);
 
 
         // West Coast Moment
@@ -96,20 +114,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Shuffleboard.getTab("Odometry").add("Odometry", field)
             .withWidget(BuiltInWidgets.kField);
 
-
-        ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
-        /*testTab.addBoolean("Left Traction", () -> leftTraction());
-        testTab.addBoolean("Right Traction", () -> rightTraction());
-        testTab.addNumber("Right Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().rightMetersPerSecond)+feedForward.calculate(diffSpeeds.rightMetersPerSecond)/DriveConstants.Kv));
-        //testTab.addNumber("Right Desired ms", () -> feedForward.calculate(diffSpeeds.rightMetersPerSecond));
-        testTab.addNumber("Right ms", () -> getWheelSpeeds().rightMetersPerSecond);
-        testTab.addNumber("Left Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().leftMetersPerSecond)+feedForward.calculate(diffSpeeds.leftMetersPerSecond)/DriveConstants.Kv));
-        //testTab.addNumber("Left Desired ms", () -> feedForward.calculate(diffSpeeds.leftMetersPerSecond));
-        testTab.addNumber("Left ms", () -> getWheelSpeeds().leftMetersPerSecond);
-        testTab.addNumber("Right Voltage", () -> rightMaster.getVoltage());
-        testTab.addNumber("Left Voltage", () -> leftMaster.getVoltage());*/
-        testTab.addNumber("Accelerometer", () -> gyro.getWorldLinearAccelY());
-    }
+            Shuffleboard.getTab("Kin").addNumber("Left Speed", () -> leftEncoder.getVelocity());
+            Shuffleboard.getTab("Kin").addNumber("Right Speed", () -> rightEncoder.getVelocity());
+        }
 
 
     /**
@@ -192,8 +199,10 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.diffSpeeds.desaturate(DriveConstants.MAX_FORWARD_VELOCITY);
         //System.out.println(this.diffSpeeds);
         //System.out.println(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
-        leftMaster.setVoltage(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
-        rightMaster.setVoltage(feedForward.calculate(diffSpeeds.rightMetersPerSecond));
+        /*leftMaster.setVoltage(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
+        rightMaster.setVoltage(feedForward.calculate(diffSpeeds.rightMetersPerSecond));*/
+        leftPid.setReference(diffSpeeds.leftMetersPerSecond, ControlType.kVelocity);
+        rightPid.setReference(diffSpeeds.rightMetersPerSecond, ControlType.kVelocity);
         //this.set(feedForward.calculate(diffSpeeds.leftMetersPerSecond), feedForward.calculate(diffSpeeds.rightMetersPerSecond));
     }
 

@@ -53,6 +53,11 @@ public final class Constants {
     public static final double DRIVE_ERROR = 0.003 * DRIVETRAIN_POSITION_SCALE; // rotaions
 
     public static class DriveConstants {
+
+        public static final double kDriveP = 0.5;
+        public static final double kDriveI = 0.0;
+        public static final double kDriveD = 2;
+
         public static final double RIGHT_MASTER_ID = 2;
         public static final double RIGHT_SLAVE_ID = 4;
         public static final double LEFT_MASTER_ID = 1;
