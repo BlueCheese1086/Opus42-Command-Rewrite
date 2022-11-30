@@ -150,11 +150,11 @@ public class RobotContainer {
   // Input filtering
 
   private double getForward() {
-    return Meth.doMagik(driver.getRightTriggerAxis() - driver.getLeftTriggerAxis());
+    return Util.doMagik(driver.getRightTriggerAxis() - driver.getLeftTriggerAxis());
   }
 
   private double getTurn() {
-    return -Meth.doTurnMagik(driver.getLeftX());
+    return -Util.doTurnMagik(driver.getLeftX());
   }
 
   public Command getAutonomousCommand() {

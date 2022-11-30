@@ -2,7 +2,7 @@ package frc.robot;
 
 //Math but im not changing file name
 //IT'S BACK
-public class Meth {
+public class Util {
     
     //Brain damaged rate implementation
     //https://www.desmos.com/calculator/xnjxq7rowq
