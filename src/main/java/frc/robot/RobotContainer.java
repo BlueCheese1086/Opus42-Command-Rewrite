@@ -25,12 +25,11 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
 import frc.robot.AUTO.TwoBallAUTO;
 import frc.robot.Constants.DriveConstants;
 import frc.robot.RapperClass.FiftyCent;
-import frc.robot.climb.ClimbSubsystem;
-import frc.robot.climb.Commands.Climb;
-import frc.robot.climb.Commands.SetLock;
+import frc.robot.Climb.ClimbSubsystem;
+import frc.robot.Climb.Commands.Climb;
+import frc.robot.Climb.Commands.SetLock;
 import frc.robot.drive.DrivetrainSubsystem;
 import frc.robot.drive.Commands.DefaultDrive;
-import frc.robot.drive.Commands.FollowPathGenerator;
 import frc.robot.drive.Commands.XAlignDrivetrain;
 import frc.robot.intake.IntakeSubsystem;
 import frc.robot.intake.Commands.IndexBall;
@@ -70,6 +69,8 @@ public class RobotContainer {
   /**
    * The container for the robot. Contains subsystems, OI devices, and commands.
    */
+
+   //Testing changes
   public RobotContainer() {
 
     autoList.setDefaultOption("Two Ball Auto", new TwoBallAUTO(drivetrain, limelight, shooter, intake, tower));

@@ -1,9 +1,9 @@
-package frc.robot.climb.Commands;
+package frc.robot.Climb.Commands;
 
 import java.util.function.DoubleSupplier;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import frc.robot.climb.ClimbSubsystem;
+import frc.robot.Climb.ClimbSubsystem;
 
 public class Climb extends CommandBase {
 
