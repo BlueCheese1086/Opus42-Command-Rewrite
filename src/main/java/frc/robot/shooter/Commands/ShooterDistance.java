@@ -33,7 +33,7 @@ public class ShooterDistance extends CommandBase {
     @Override
     public void execute() {
         //shooter.setMotorVelo(shooter.getSpeedFromDistance(lime.getYAngle()));
-        shooter.setMotorVelo(6900);
+        shooter.setMotorVelo(shooter.rpmToEncoderShitters(5000));
         //shooter.setHoodPosition(-0.026*lime.getYAngle()+0.0055);
         shooter.setHoodPosition(1);
         if (x == null) return;

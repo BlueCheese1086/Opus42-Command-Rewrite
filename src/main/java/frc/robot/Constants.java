@@ -23,26 +23,26 @@ import edu.wpi.first.math.util.Units;
 public final class Constants {
 
     public static class ShooterConstants {
-        public static final double LAUNCHER_DEFAULT_VELOCITY = 9.0; // meters/second
-
-        public static final double LAUNCHER_MIN_ANGLE = 80.2141;
-        public static final double LAUNCHER_MAX_ANGLE = 90;
-
         public static final double CAMERA_HEIGHT = 0.762; // meters
         public static final double CAMERA_ANGLE = 45; // degrees
         public static final double LAUNCHER_WHEEL_DIAMETER = 0.1016; // m e t er s??
         public static final double LAUNCHER_WHEEL_CIRCUMFERENCE = 2 * Math.PI * (LAUNCHER_WHEEL_DIAMETER / 2);
         public static final double LAUNCHER_ENCODER_UNITS_PER_ROTATION = 2048.0;
+        
+        // Max motor rpm * Encoder units per rev / minutes to 100 ms
         public static final double LAUNCHER_MAX_VELOCITY = 6380.0 * 2048.0 / 600.0;
 
-        public static final double UPPER_HUB_HEIGHT = 2.64; // meters
+        public static final double TARGET_HEIGHT = Units.feetToMeters(10); // meters
         public static final double GRAVITY = 9.8; // meters/second
-        public static final double CARGO_DIAMETER = 0.24;
+        public static final double CARGO_DIAMETER = Units.inchesToMeters(9.5);
 
-        public static final double LAUNCHER_KP = 0.2;
+        public static final double HEIGHT_DIFFERENCE = TARGET_HEIGHT - CAMERA_HEIGHT;
+
+        public static final double LAUNCHER_KP = 2.3;
         public static final double LAUNCHER_KI = 0.0;
-        public static final double LAUNCHER_KD = 2.8;
-        public static final double LAUNCHER_KF = 1100 / LAUNCHER_MAX_VELOCITY;
+        public static final double LAUNCHER_KD = 1.8;
+        public static final double LAUNCHER_KF = 1023 / LAUNCHER_MAX_VELOCITY;
+        //public static final double LAUNCHER_KF = 1100 / LAUNCHER_MAX_VELOCITY;
     }
 
     public static final double DRIVETRAIN_POSITION_SCALE = (8.98) / (ShooterConstants.CARGO_DIAMETER * Math.PI); // m ->
@@ -56,7 +56,8 @@ public final class Constants {
 
         public static final double kDriveP = 0.5;
         public static final double kDriveI = 0.0;
-        public static final double kDriveD = 2;
+        public static final double kDriveD = 0.01;
+        public static final double kDriveFF = 0.1;
 
         public static final double RIGHT_MASTER_ID = 2;
         public static final double RIGHT_SLAVE_ID = 4;

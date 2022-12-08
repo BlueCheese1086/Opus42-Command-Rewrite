@@ -98,10 +98,12 @@ public class DrivetrainSubsystem extends SubsystemBase {
         leftPid.setP(DriveConstants.kDriveP);
         leftPid.setI(DriveConstants.kDriveI);
         leftPid.setD(DriveConstants.kDriveD);
+        leftPid.setFF(DriveConstants.kDriveFF);
 
         rightPid.setP(DriveConstants.kDriveP);
         rightPid.setI(DriveConstants.kDriveI);
         rightPid.setD(DriveConstants.kDriveD);
+        rightPid.setFF(DriveConstants.kDriveFF);
 
 
         // West Coast Moment
@@ -128,13 +130,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     @Override
     public void periodic() {
-        SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
-        SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
-        //FiftyCent.putShuffleboard();
-        //testTab.addNumber("Left Acceleration", );
-
-        //testTab.addNumber("Desired RPM", );
-
         odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
     }
@@ -197,15 +192,20 @@ public class DrivetrainSubsystem extends SubsystemBase {
         this.diffSpeeds = kinematics.toWheelSpeeds(speeds);
         //System.out.println(speeds);
         this.diffSpeeds.desaturate(DriveConstants.MAX_FORWARD_VELOCITY);
-        //System.out.println(this.diffSpeeds);
-        //System.out.println(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
-        /*leftMaster.setVoltage(feedForward.calculate(diffSpeeds.leftMetersPerSecond));
-        rightMaster.setVoltage(feedForward.calculate(diffSpeeds.rightMetersPerSecond));*/
         leftPid.setReference(diffSpeeds.leftMetersPerSecond, ControlType.kVelocity);
         rightPid.setReference(diffSpeeds.rightMetersPerSecond, ControlType.kVelocity);
         //this.set(feedForward.calculate(diffSpeeds.leftMetersPerSecond), feedForward.calculate(diffSpeeds.rightMetersPerSecond));
     }
 
+
+    /**
+     * Turns distance
+     * @param distance Distance to turn - positive is clockwise
+     */
+    public void turnDistance(double distance) {
+        leftPid.setReference(distance, ControlType.kPosition);
+        rightPid.setReference(distance, ControlType.kPosition);
+    }
 
     /**
      * Set drive motors with voltage
@@ -235,6 +235,13 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public void set(double left, double right) {
         leftMaster.set(left);
         rightMaster.set(right);
+    }
+
+    public void stop() {
+        leftPid.setReference(0.0, ControlType.kVoltage);
+        rightPid.setReference(0.0, ControlType.kVoltage);
+        leftMaster.set(0);
+        rightMaster.set(0);
     }
 
     public boolean leftTraction() {

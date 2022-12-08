@@ -27,12 +27,14 @@ public class ShooterSubsystem extends SubsystemBase {
         x.config_kI(0, ShooterConstants.LAUNCHER_KI);
         x.config_kD(0, ShooterConstants.LAUNCHER_KD);
         x.config_kF(0, ShooterConstants.LAUNCHER_KF);
+        x.configVoltageCompSaturation(x.getBusVoltage());
 
         y.setInverted(true);
         y.config_kP(0, ShooterConstants.LAUNCHER_KP);
         y.config_kI(0, ShooterConstants.LAUNCHER_KI);
         y.config_kD(0, ShooterConstants.LAUNCHER_KD);
         y.config_kF(0, ShooterConstants.LAUNCHER_KF);
+        y.configVoltageCompSaturation(y.getBusVoltage());
 
     }
 
@@ -52,6 +54,10 @@ public class ShooterSubsystem extends SubsystemBase {
     public void setMotorVelo(double velo) {
         x.set(TalonFXControlMode.Velocity, velo);
         y.set(TalonFXControlMode.Velocity, velo);
+    }
+
+    public double rpmToEncoderShitters(double rpm) {
+        return rpm * 2048 / 600;
     }
 
     /**
@@ -77,6 +83,14 @@ public class ShooterSubsystem extends SubsystemBase {
      * @return RPM of the motor
      */
     public double getMotorVelocity() {
+        // Encoder units per 100ms to RPM (2048 encoder units/revolution) (600 is ms to m)
+        return x.getSelectedSensorVelocity() * 600 / 2048;
+    }
+
+    /**
+     * @return Enocder units per 100ms
+     */
+    public double getRawMotorVelocity() {
         return x.getSelectedSensorVelocity();
     }
 

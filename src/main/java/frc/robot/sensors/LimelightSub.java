@@ -3,6 +3,7 @@ package frc.robot.sensors;
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.Constants.ShooterConstants;
 
 public class LimelightSub extends SubsystemBase {
     //limelight returns in inches
@@ -27,6 +28,13 @@ public class LimelightSub extends SubsystemBase {
       */
      public double getYAngle() {
          return limelight.getEntry("ty").getDouble(0);
+     }
+
+     /**
+      * @return Distance from target in Meters
+      */
+     public double getDistance() {
+         return ShooterConstants.HEIGHT_DIFFERENCE/Math.tan(getYAngle()+ShooterConstants.CAMERA_ANGLE);
      }
 
      /**

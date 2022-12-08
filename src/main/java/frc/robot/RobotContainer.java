@@ -103,7 +103,7 @@ public class RobotContainer {
 
     new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
 
-    //new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
+    new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
 
     //new JoystickButton(driver, Button.kRightBumper.value).whileHeld();
 
