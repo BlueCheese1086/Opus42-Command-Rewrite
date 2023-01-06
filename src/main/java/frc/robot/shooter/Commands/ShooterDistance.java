@@ -17,18 +17,20 @@ public class ShooterDistance extends CommandBase {
         shooter = shoot;
         this.lime = lime;
         this.x = x;
-        addRequirements(shooter, this.lime);
+        addRequirements(shooter);
     }
 
     public ShooterDistance(ShooterSubsystem shoot, LimelightSub lime) {
         shooter = shoot;
         this.lime = lime;
         this.x = null;
-        addRequirements(shooter, this.lime);
+        addRequirements(shooter);
     }
     
     @Override
-    public void initialize() {}
+    public void initialize() {
+        lime.turnOnLights();
+    }
 
     @Override
     public void execute() {
@@ -49,6 +51,7 @@ public class ShooterDistance extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooter.setMotorVelo(0);
+        lime.turnOffLights();
         if (x == null) return;
         x.setRumble(RumbleType.kLeftRumble, 0);
         x.setRumble(RumbleType.kRightRumble, 0);

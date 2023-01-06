@@ -43,6 +43,20 @@ public class LimelightSub extends SubsystemBase {
      }
 
      /**
+      * Turns on the limelight lights
+      */
+     public void turnOnLights() {
+         setLights(3);
+     }
+     
+     /**
+      * Turns off the limelight lights
+      */
+     public void turnOffLights() {
+         setLights(1);
+     }
+
+     /**
       * Gets current limelight led state
       * 0 - Pipeline setting
       * 1 - Off
