@@ -73,8 +73,8 @@ public class LookupTable {
         double xMean = sumX/count;
         double yMean = sumY/count;
 
-        double slope = (sumXY - sumX * yMean) / (sumX2 - sumX * xMean);
-        double yInt = yMean - slope * xMean;
+        double slope = ((count*sumXY) - (sumX*sumY))/((count*sumX2)-(sumX*sumX));
+        double yInt = ((sumX2*sumY)-(sumX*sumXY))/((count*sumX2)-(sumX*sumX));
 
         hoodFormula[0] = slope;
         hoodFormula[1] = yInt;
