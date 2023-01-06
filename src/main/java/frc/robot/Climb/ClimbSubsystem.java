@@ -1,4 +1,4 @@
-package frc.robot.Climb;
+package frc.robot.climb;
 
 import com.revrobotics.RelativeEncoder;
 import com.revrobotics.CANSparkMax.IdleMode;
