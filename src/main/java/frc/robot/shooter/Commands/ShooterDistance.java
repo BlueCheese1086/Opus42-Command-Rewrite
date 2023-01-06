@@ -34,12 +34,10 @@ public class ShooterDistance extends CommandBase {
 
     @Override
     public void execute() {
-        //shooter.setMotorVelo(shooter.getSpeedFromDistance(lime.getYAngle()));
-        shooter.setMotorVelo(6900);
-        //shooter.setHoodPosition(-0.026*lime.getYAngle()+0.0055);
-        shooter.setHoodPosition(1);
+        shooter.setMotorVelo(shooter.getSpeedFromDistance(lime.getYAngle()));
+        shooter.setHoodPosition(shooter.getHoodAngleFromDistance(lime.getYAngle()));
         if (x == null) return;
-        if (Math.abs(shooter.getMotorVelocity() - shooter.getSpeedFromDistance(lime.getYAngle())) < 100) {
+        if (Math.abs(shooter.getMotorVelocity() - shooter.getSpeedFromDistance(lime.getYAngle())) < 50) {
             x.setRumble(RumbleType.kLeftRumble, 1);
             x.setRumble(RumbleType.kRightRumble, 1);
         } else {
@@ -51,6 +49,7 @@ public class ShooterDistance extends CommandBase {
     @Override
     public void end(boolean interrupted) {
         shooter.setMotorVelo(0);
+        shooter.setHoodPosition(0.5);
         lime.turnOffLights();
         if (x == null) return;
         x.setRumble(RumbleType.kLeftRumble, 0);

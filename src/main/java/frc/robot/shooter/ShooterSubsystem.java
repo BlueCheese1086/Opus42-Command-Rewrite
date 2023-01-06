@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.Servo;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants.ShooterConstants;
+import frc.robot.util.LookupTable;
 
 public class ShooterSubsystem extends SubsystemBase {
 
@@ -13,6 +14,12 @@ public class ShooterSubsystem extends SubsystemBase {
     private static final TalonFX y = new TalonFX(52);
 
     private static final Servo hood = new Servo(0);
+
+    //Pass points in the format of {Distance, RPM, Hood Angle}
+    private static final LookupTable table = new LookupTable(new double[][]{
+        {-4.58, 4150, 1},
+        {7.26, 3030, .25}
+    });
 
     /**
      * Sets hood position to 0
@@ -34,6 +41,7 @@ public class ShooterSubsystem extends SubsystemBase {
         y.config_kD(0, ShooterConstants.LAUNCHER_KD);
         y.config_kF(0, ShooterConstants.LAUNCHER_KF);
 
+
     }
 
 
@@ -41,7 +49,7 @@ public class ShooterSubsystem extends SubsystemBase {
      * Updates shooter rpm on Shuffleboard
      */
     public void periodic() {
-        SmartDashboard.putNumber("Shooter speed", getMotorVelocity());
+        SmartDashboard.putNumber("Shooter speed", getMotorVelocity()*600/2048);
     }
 
 
@@ -50,18 +58,27 @@ public class ShooterSubsystem extends SubsystemBase {
      * @param velo How fast you want the flywheel (rpm)
      */
     public void setMotorVelo(double velo) {
+        velo = velo * 2048.0 / 600.0;
         x.set(TalonFXControlMode.Velocity, velo);
         y.set(TalonFXControlMode.Velocity, velo);
     }
 
     /**
-     * Gets shooter speed from limelight angle
+     * Gets the shooter speed from limelight angle
      * @param distance Limelight angle
      */
     public double getSpeedFromDistance(double distance) {
-        return distance*-96.4+7537.7;
+        return table.calculate(distance)[0];
     }
 
+    /**
+     * Gets the hood angle from limelight angle
+     * @param distance Limelight angle
+     */
+    public double getHoodAngleFromDistance(double distance) {
+        return table.calculate(distance)[1];
+    }
+    
     /**
      * Sets the speed of flywheel in percentage of motor ability
      * Reccommended use is to stop motors
@@ -78,6 +95,13 @@ public class ShooterSubsystem extends SubsystemBase {
      */
     public double getMotorVelocity() {
         return x.getSelectedSensorVelocity();
+    }
+
+    /**
+     * @return Current angle of hood
+     */
+    public double getHoodAngle() {
+        return hood.get();
     }
 
     /**

@@ -14,7 +14,12 @@ public class XAlignDrivetrain extends CommandBase {
     public XAlignDrivetrain(DrivetrainSubsystem drive, LimelightSub lime) {
         this.drive = drive;
         this.lime = lime;
-        addRequirements(this.drive, this.lime);
+        addRequirements(drive);
+    }
+
+    @Override
+    public void initialize() {
+        lime.turnOnLights();
     }
 
     @Override
@@ -27,7 +32,13 @@ public class XAlignDrivetrain extends CommandBase {
         drive.set(-speed, speed);
     }
 
+    @Override
     public boolean isFinished() {
-        return xAlignPID.atSetpoint();
+        return false;
+    }
+
+    @Override
+    public void end(boolean interrupted) {
+        lime.turnOffLights();
     }
 }

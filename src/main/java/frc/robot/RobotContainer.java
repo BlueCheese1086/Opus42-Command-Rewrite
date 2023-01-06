@@ -36,7 +36,6 @@ import frc.robot.intake.Commands.IndexBall;
 import frc.robot.intake.Commands.IntakeBall;
 import frc.robot.intake.Commands.OuttakeBall;
 import frc.robot.sensors.LimelightSub;
-import frc.robot.sensors.Commands.LimeCommand;
 import frc.robot.shooter.ShooterSubsystem;
 import frc.robot.shooter.Commands.RunShooter;
 import frc.robot.shooter.Commands.ShootBall;
@@ -85,12 +84,10 @@ public class RobotContainer {
 
     shooter.setDefaultCommand(new RunShooter(shooter, () -> 0.0));
 
-    limelight.setDefaultCommand(
-      new LimeCommand(limelight));
-
     // Configure the button bindings
     configureButtonBindings();
     SmartDashboard.putNumber("Shooter Target", 10);
+    SmartDashboard.putNumber("Hood Target", 0.5);
 
     Shuffleboard.getTab("Auto").add("Auto Chooser", autoList);
   }
@@ -100,6 +97,7 @@ public class RobotContainer {
     // Driver Controls
 
     new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
+    new JoystickButton(driver, Button.kX.value).toggleWhenActive(new RunShooter(shooter, () -> SmartDashboard.getNumber("Shooter Target", 1), () -> SmartDashboard.getNumber("Hood Target", 0)));
     new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(tower));
 
     new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
@@ -121,7 +119,7 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kRightBumper.value).whileHeld(new IndexBall(intake, true));
     new JoystickButton(operator, Button.kLeftBumper.value).whileHeld(new IndexBall(intake, false));
 
-    new JoystickButton(operator, Button.kB.value).whileHeld(new IntakeBall(intake));
+    new JoystickButton(driver, Button.kRightBumper.value).whileHeld(new IntakeBall(intake));
 
     new JoystickButton(operator, Button.kX.value).whileHeld(new OuttakeBall(intake));
     
