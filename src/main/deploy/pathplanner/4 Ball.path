@@ -1,0 +1,95 @@
+{
+  "waypoints": [
+    {
+      "anchorPoint": {
+        "x": 7.841590911889702,
+        "y": 2.1196619451703644
+      },
+      "prevControl": null,
+      "nextControl": {
+        "x": 7.841590911889702,
+        "y": 1.89958775414232
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "waitTime": 0
+    },
+    {
+      "anchorPoint": {
+        "x": 8.025624549832669,
+        "y": 0.8625943597496254
+      },
+      "prevControl": {
+        "x": 8.532300844779012,
+        "y": 1.4686189478226939
+      },
+      "nextControl": {
+        "x": 7.728379196135163,
+        "y": 0.5070656033663344
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "waitTime": 0
+    },
+    {
+      "anchorPoint": {
+        "x": 2.0107773926596013,
+        "y": 0.9908178456583545
+      },
+      "prevControl": {
+        "x": 2.384426914217197,
+        "y": 0.8043888870126534
+      },
+      "nextControl": {
+        "x": -0.8876516878828471,
+        "y": 2.4369621172780174
+      },
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "waitTime": 0.0
+    },
+    {
+      "anchorPoint": {
+        "x": 4.604388812177058,
+        "y": 1.6435919557391516
+      },
+      "prevControl": {
+        "x": 4.056524826930674,
+        "y": 1.2589214980129677
+      },
+      "nextControl": null,
+      "holonomicAngle": 0.0,
+      "isReversal": false,
+      "velOverride": null,
+      "isLocked": false,
+      "isStopPoint": false,
+      "waitTime": 0
+    }
+  ],
+  "maxVelocity": 6.0,
+  "maxAcceleration": 2.0,
+  "isReversed": null,
+  "markers": [
+    {
+      "position": 1.0363636363636184,
+      "name": "shoot1"
+    },
+    {
+      "position": 1.9636363636363456,
+      "name": "intake2"
+    },
+    {
+      "position": 2.4000000000001043,
+      "name": "RevShooter"
+    }
+  ]
+}
