@@ -17,6 +17,7 @@ import edu.wpi.first.wpilibj.BuiltInAccelerometer;
 import edu.wpi.first.wpilibj.interfaces.Accelerometer;
 import edu.wpi.first.wpilibj.shuffleboard.BuiltInWidgets;
 import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.Field2d;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
@@ -37,7 +38,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
     private static final AHRS gyro = new AHRS();
     
     //Play with this later for better odometry
-    //private static final Accelerometer accelerometer = new BuiltInAccelerometer();
+    private static final Accelerometer accelerometer = new BuiltInAccelerometer();
 
     public DifferentialDriveKinematics kinematics = DriveConstants.kinematics;//new DifferentialDriveKinematics(0.762);
     private DifferentialDriveWheelSpeeds diffSpeeds = DriveConstants.wheelSpeeds;//new DifferentialDriveWheelSpeeds(0.0, 0.0);
@@ -95,6 +96,19 @@ public class DrivetrainSubsystem extends SubsystemBase {
         Shuffleboard.getTab("Odometry").add("Odometry", field)
             .withWidget(BuiltInWidgets.kField);
 
+
+        ShuffleboardTab testTab = Shuffleboard.getTab("Testing");
+        /*testTab.addBoolean("Left Traction", () -> leftTraction());
+        testTab.addBoolean("Right Traction", () -> rightTraction());
+        testTab.addNumber("Right Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().rightMetersPerSecond)+feedForward.calculate(diffSpeeds.rightMetersPerSecond)/DriveConstants.Kv));
+        //testTab.addNumber("Right Desired ms", () -> feedForward.calculate(diffSpeeds.rightMetersPerSecond));
+        testTab.addNumber("Right ms", () -> getWheelSpeeds().rightMetersPerSecond);
+        testTab.addNumber("Left Desired ms", () -> (DriveConstants.Ks*Math.signum(getWheelSpeeds().leftMetersPerSecond)+feedForward.calculate(diffSpeeds.leftMetersPerSecond)/DriveConstants.Kv));
+        //testTab.addNumber("Left Desired ms", () -> feedForward.calculate(diffSpeeds.leftMetersPerSecond));
+        testTab.addNumber("Left ms", () -> getWheelSpeeds().leftMetersPerSecond);
+        testTab.addNumber("Right Voltage", () -> rightMaster.getVoltage());
+        testTab.addNumber("Left Voltage", () -> leftMaster.getVoltage());*/
+        testTab.addNumber("Accelerometer", () -> gyro.getWorldLinearAccelY());
     }
 
 
@@ -110,6 +124,9 @@ public class DrivetrainSubsystem extends SubsystemBase {
         SmartDashboard.putNumber("Right Encoder", rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         SmartDashboard.putNumber("Left Encoder", leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO);
         //FiftyCent.putShuffleboard();
+        //testTab.addNumber("Left Acceleration", );
+
+        //testTab.addNumber("Desired RPM", );
 
         odometry.update(gyro.getRotation2d(), leftEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE, rightEncoder.getPosition() / DriveConstants.GEARBOX_RATIO * DriveConstants.WHEEL_CIRCUMPHRENCE);
         field.setRobotPose(odometry.getPoseMeters());
@@ -130,7 +147,6 @@ public class DrivetrainSubsystem extends SubsystemBase {
     public RelativeEncoder getLeftEncoder() {
         return leftEncoder;
     }
-
 
     /**
      * Resets odometry to given pose
@@ -189,8 +205,7 @@ public class DrivetrainSubsystem extends SubsystemBase {
      */
     public void voltDrive(double vLeft, double vRight) {
         leftMaster.setVoltage(vLeft);
-        rightMaster.setVoltage(vRight);
-        
+        rightMaster.setVoltage(vRight);        
     }
 
     /**
@@ -212,5 +227,14 @@ public class DrivetrainSubsystem extends SubsystemBase {
         leftMaster.set(left);
         rightMaster.set(right);
     }
-    
+
+    public boolean leftTraction() {
+        //if (rightMaster.getEncoder().getVelocity() > 0) {}
+        return Math.abs(getWheelSpeeds().leftMetersPerSecond) <= Math.abs((DriveConstants.Ks*-Math.signum(getWheelSpeeds().leftMetersPerSecond)+feedForward.calculate(diffSpeeds.leftMetersPerSecond))/DriveConstants.Kv);
+    }
+
+    public boolean rightTraction() {
+        return Math.abs(getWheelSpeeds().rightMetersPerSecond) <= Math.abs((DriveConstants.Ks*-Math.signum(getWheelSpeeds().rightMetersPerSecond)+feedForward.calculate(diffSpeeds.rightMetersPerSecond))/DriveConstants.Kv);
+    }
+
 }

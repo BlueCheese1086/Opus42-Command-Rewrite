@@ -98,12 +98,15 @@ public class RobotContainer {
 
     // Driver Controls
 
-    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
+    //new JoystickButton(driver, Button.kB.value).toggleWhenActive(new ShooterDistance(shooter, limelight, driver));
+    new JoystickButton(driver, Button.kB.value).toggleWhenActive(new RunShooter(shooter, () -> 6000));
     new JoystickButton(driver, Button.kA.value).whileHeld(new ShootBall(tower));
 
     new JoystickButton(driver, Button.kY.value).whileHeld(new XAlignDrivetrain(drivetrain, limelight));
 
-    new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
+    new JoystickButton(driver, Button.kRightBumper.value).whileHeld(new IntakeBall(intake));
+    new JoystickButton(driver, Button.kLeftBumper.value).whileHeld(new OuttakeBall(intake));
+    //new JoystickButton(driver, Button.kX.value).whileHeld(new IntakeBall(intake));
 
     //new JoystickButton(driver, Button.kRightBumper.value).whileHeld();
 
@@ -115,7 +118,7 @@ public class RobotContainer {
     // Op Controls
 
     // Climb
-    new Trigger(() -> Math.abs(operator.getLeftY()) > 0.1 || Math.abs(operator.getRightY()) > 0.1).whileActiveContinuous(new Climb(climb, () -> operator.getLeftY(), () -> operator.getRightY()));
+    /*new Trigger(() -> Math.abs(operator.getLeftY()) > 0.1 || Math.abs(operator.getRightY()) > 0.1).whileActiveContinuous(new Climb(climb, () -> operator.getLeftY(), () -> operator.getRightY()));
 
     new JoystickButton(operator, Button.kRightBumper.value).whileHeld(new IndexBall(intake, true));
     new JoystickButton(operator, Button.kLeftBumper.value).whileHeld(new IndexBall(intake, false));
@@ -127,7 +130,7 @@ public class RobotContainer {
     new JoystickButton(operator, Button.kY.value).whileHeld(new SetLock(climb, false)).whenReleased(new SetLock(climb, true));
 
     //toshi is coding very fast right now bruuuuuuuuuu so much coding this is crazy can't wait to see what these 
-
+    */
 
     /*
      * TODO
@@ -149,15 +152,19 @@ public class RobotContainer {
   // Input filtering
 
   private double getForward() {
-    return Meth.doMagik(driver.getRightTriggerAxis() - driver.getLeftTriggerAxis());
+    return Util.doMagik(driver.getRightTriggerAxis() - driver.getLeftTriggerAxis());
   }
 
   private double getTurn() {
-    return -Meth.doTurnMagik(driver.getLeftX());
+    return -Util.doTurnMagik(driver.getLeftX());
   }
 
   public Command getAutonomousCommand() {
     return getAuto();
+  }
+
+  public void setHood(double pos) {
+    shooter.setHoodPosition(pos);
   }
 
   public Command getAuto() {

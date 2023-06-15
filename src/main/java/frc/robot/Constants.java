@@ -63,7 +63,7 @@ public final class Constants {
         public static final double Ka = 0.40226;
 
         // m/s
-        public static final double MAX_FORWARD_VELOCITY = 1.0;
+        public static final double MAX_FORWARD_VELOCITY = 6.0;
         // rad/s
         public static final double MAX_TURNING_VELOCITY = 20;
 
